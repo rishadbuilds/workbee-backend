@@ -2,6 +2,8 @@ import { injectable } from "tsyringe";
 import { getPrisma } from "../../config/prisma";
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { Wallet } from "../../../domain/entities/Wallet";
+import { UserRole } from "workbee-common";
+import { Wallet as PrismaWallet, WalletRole as PrismaWalletRole,} from "../../../generated/prisma/client";
 
 @injectable()
 export class WalletRepository implements IWalletRepository {
@@ -9,11 +11,11 @@ export class WalletRepository implements IWalletRepository {
     return getPrisma();
   }
 
-  private mapWallet(row: any): Wallet {
+  private mapWallet(row: PrismaWallet): Wallet {
     return {
       id: row.id,
       ownerId: row.ownerId,
-      role: row.role,
+      role: row.role as unknown as UserRole,
       balance: Number(row.balance),
       pendingBalance: Number(row.pendingBalance),
       totalEarned: Number(row.totalEarned),
@@ -23,18 +25,31 @@ export class WalletRepository implements IWalletRepository {
     };
   }
 
-  async findByOwner(ownerId: string, role: string): Promise<Wallet | null> {
+  async findByOwner(ownerId: string, role: UserRole): Promise<Wallet | null> {
     const row = await this.db.wallet.findUnique({
-      where: { ownerId_role: { ownerId, role: role as any } },
+      where: {
+        ownerId_role: {
+          ownerId,
+          role: role as unknown as PrismaWalletRole,
+        },
+      },
     });
     return row ? this.mapWallet(row) : null;
   }
 
-  async findOrCreate(ownerId: string, role: string): Promise<Wallet> {
+  async findOrCreate(ownerId: string, role: UserRole): Promise<Wallet> {
     const row = await this.db.wallet.upsert({
-      where: { ownerId_role: { ownerId, role: role as any } },
+      where: {
+        ownerId_role: {
+          ownerId,
+          role: role as unknown as PrismaWalletRole,
+        },
+      },
       update: {},
-      create: { ownerId, role: role as any },
+      create: {
+        ownerId,
+        role: role as unknown as PrismaWalletRole,
+      },
     });
     return this.mapWallet(row);
   }

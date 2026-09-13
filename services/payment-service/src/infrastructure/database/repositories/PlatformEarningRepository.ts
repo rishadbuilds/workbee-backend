@@ -1,20 +1,14 @@
 import { injectable } from "tsyringe";
-import { Prisma } from "../../../generated/prisma/client";
+import {PlatformEarning as PrismaPlatformEarning,} from "../../../generated/prisma/client";
 
 import { getPrisma } from "../../config/prisma";
-import {IPlatformEarningRepository} from "../../../domain/repositories/IPlatformEarningRepository";
+import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
 import { PlatformEarning } from "../../../domain/entities/Platform";
+import { MonthlyPlatformEarningRow } from "../row/MonthlyPlatformEarningRow";
 
-type PrismaPlatformEarning = Prisma.PlatformEarningGetPayload<{}>;
-
-interface MonthlyPlatformEarningRow {
-  month: number;
-  year: number;
-  amount: number;
-}
 
 @injectable()
-export class PlatformEarningRepository implements IPlatformEarningRepository{
+export class PlatformEarningRepository implements IPlatformEarningRepository {
   private get db() {
     return getPrisma();
   }
@@ -96,7 +90,7 @@ export class PlatformEarningRepository implements IPlatformEarningRepository{
     };
   }
 
-  async findAll(limit = 50,offset = 0): Promise<PlatformEarning[]> {
+  async findAll(limit = 50, offset = 0): Promise<PlatformEarning[]> {
     const rows = await this.db.platformEarning.findMany({
       orderBy: {
         collectedAt: "desc",

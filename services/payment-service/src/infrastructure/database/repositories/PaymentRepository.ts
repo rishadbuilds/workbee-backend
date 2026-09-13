@@ -1,17 +1,11 @@
 import { injectable } from "tsyringe";
-import { PaymentStatus, Prisma } from "../../../generated/prisma/client";
+import {PaymentStatus,Prisma,Payment as PrismaPayment,} from "../../../generated/prisma/client";
 
 import { getPrisma } from "../../config/prisma";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { Payment } from "../../../domain/entities/Payment";
+import { MonthlyRevenueRow } from "../row/MonthlyRevenueRow";
 
-type PrismaPayment = Prisma.PaymentGetPayload<{}>;
-
-interface MonthlyRevenueRow {
-  month: number;
-  year: number;
-  amount: number;
-}
 
 @injectable()
 export class PaymentRepository implements IPaymentRepository {

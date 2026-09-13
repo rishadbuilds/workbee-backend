@@ -1,8 +1,21 @@
 import { injectable } from "tsyringe";
 import { getPrisma } from "../../config/prisma";
-import { ITransactionRepository, PaginatedTransactions, TransactionQueryOptions } from "../../../domain/repositories/ITransactionRepository";
-import { Transaction, TransactionStatus, TransactionType } from "../../../domain/entities/Transaction";
-import { Prisma } from "../../../generated/prisma/client";
+import {ITransactionRepository,PaginatedTransactions,TransactionQueryOptions,} from "../../../domain/repositories/ITransactionRepository";
+import {Transaction,TransactionStatus,TransactionType,JsonObject,JsonValue,} from "../../../domain/entities/Transaction";
+import {Prisma,Transaction as PrismaTransaction,TransactionType as PrismaTransactionType,TransactionStatus as PrismaTransactionStatus,} from "../../../generated/prisma/client";
+
+function toDomainJsonObject(value: unknown): JsonObject | undefined {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return undefined;
+  }
+  const clean: JsonObject = {};
+  for (const [key, val] of Object.entries(value)) {
+    if (val !== undefined) {
+      clean[key] = val as JsonValue;
+    }
+  }
+  return clean;
+}
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
@@ -10,18 +23,18 @@ export class TransactionRepository implements ITransactionRepository {
     return getPrisma();
   }
 
-  private mapTx(row: any): Transaction {
+  private mapTx(row: PrismaTransaction): Transaction {
     return {
       id: row.id,
       walletId: row.walletId,
       workId: row.workId ?? undefined,
       razorpayPaymentId: row.razorpayPaymentId ?? undefined,
-      type: row.type as TransactionType,
+      type: row.type as unknown as TransactionType,
       amount: Number(row.amount),
       currency: row.currency,
-      status: row.status as TransactionStatus,
+      status: row.status as unknown as TransactionStatus,
       description: row.description ?? undefined,
-      metadata: row.metadata ?? undefined,
+      metadata: toDomainJsonObject(row.metadata),
       createdAt: row.createdAt,
     };
   }
@@ -32,41 +45,46 @@ export class TransactionRepository implements ITransactionRepository {
         walletId: data.walletId,
         workId: data.workId ?? null,
         razorpayPaymentId: data.razorpayPaymentId ?? null,
-        type: data.type as any,
+        type: data.type as unknown as PrismaTransactionType,
         amount: data.amount,
         currency: data.currency,
-        status: data.status as any,
+        status: data.status as unknown as PrismaTransactionStatus,
         description: data.description ?? null,
-        metadata: data.metadata ?? undefined,
+        metadata: data.metadata as Prisma.InputJsonValue | undefined,
       },
     });
     return this.mapTx(row);
   }
 
-  async updateStatus(id: string, status: string): Promise<Transaction> {
+  async updateStatus(id: string, status: TransactionStatus): Promise<Transaction> {
     const row = await this.db.transaction.update({
       where: { id },
-      data: { status: status as any },
+      data: { status: status as unknown as PrismaTransactionStatus },
     });
     return this.mapTx(row);
   }
 
-  async findByWalletId(walletId: string,options: TransactionQueryOptions): Promise<PaginatedTransactions> {
+  async findByWalletId(
+    walletId: string,
+    options: TransactionQueryOptions
+  ): Promise<PaginatedTransactions> {
     const { page, limit, status, startDate, endDate, excludeTypes } = options;
 
     const where: Prisma.TransactionWhereInput = {
       walletId,
-      ...(status && status !== "all" ? { status: status as any } : {}),
+      ...(status && status !== "all"
+        ? { status: status as unknown as PrismaTransactionStatus }
+        : {}),
       ...(excludeTypes && excludeTypes.length > 0
-        ? { type: { notIn: excludeTypes as any } }
+        ? { type: { notIn: excludeTypes as unknown as PrismaTransactionType[] } }
         : {}),
       ...(startDate || endDate
         ? {
-          createdAt: {
-            ...(startDate ? { gte: startDate } : {}),
-            ...(endDate ? { lte: endDate } : {}),
-          },
-        }
+            createdAt: {
+              ...(startDate ? { gte: startDate } : {}),
+              ...(endDate ? { lte: endDate } : {}),
+            },
+          }
         : {}),
     };
 
@@ -96,13 +114,22 @@ export class TransactionRepository implements ITransactionRepository {
     return rows.map((r) => this.mapTx(r));
   }
 
-  async getMonthlyEarnings(walletId: string, months: number): Promise<{ month: number; year: number; amount: number }[]> {
+  async getMonthlyEarnings(
+    walletId: string,
+    months: number
+  ): Promise<{ month: number; year: number; amount: number }[]> {
     const start = new Date();
     start.setMonth(start.getMonth() - (months - 1));
     start.setDate(1);
     start.setHours(0, 0, 0, 0);
 
-    const rows = await this.db.$queryRaw<{ month: number; year: number; amount: any }[]>`
+    interface MonthlyEarningRow {
+      month: number;
+      year: number;
+      amount: Prisma.Decimal | number | string;
+    }
+
+    const rows = await this.db.$queryRaw<MonthlyEarningRow[]>`
       SELECT
         EXTRACT(MONTH FROM created_at)::int AS month,
         EXTRACT(YEAR FROM created_at)::int AS year,
@@ -116,6 +143,10 @@ export class TransactionRepository implements ITransactionRepository {
       ORDER BY year, month;
     `;
 
-    return rows.map(r => ({ month: r.month, year: r.year, amount: Number(r.amount) }));
+    return rows.map((r) => ({
+      month: r.month,
+      year: r.year,
+      amount: Number(r.amount),
+    }));
   }
 }
