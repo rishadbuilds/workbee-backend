@@ -4,6 +4,7 @@ import { Worker } from "../../../domain/entities/Worker";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
 import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchema";
 import mongoose, { FilterQuery } from "mongoose";
+import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 @injectable()
 export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
@@ -58,6 +59,20 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
   async findByEmail(email: string): Promise<Worker | null> {
     const worker = await WorkerModel.findOne({ email });
     return worker ? this.map(worker) : null;
+  }
+
+  async reapply(id: string, data: Partial<Worker>): Promise<Worker> {
+    const updated = await WorkerModel.findByIdAndUpdate(id, {
+      ...data,
+      status: "pending",
+      rejectionReason: undefined,
+      rejectedAt: undefined,
+      updatedAt: new Date(),
+    },
+      { new: true }
+    );
+    if (!updated) throw new Error(ResponseMessage.WORKER.NOT_FOUND);
+    return this.map(updated);
   }
 
   async findById(id: string): Promise<Worker | null> {

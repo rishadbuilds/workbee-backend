@@ -5,6 +5,7 @@ import { NewWorker, Worker } from "../entities/Worker";
 export interface IWorkerRepository {
     save(worker: NewWorker): Promise<Worker>;
     findByEmail(email: string): Promise<Worker | null>;
+    reapply(id: string, data: Partial<NewWorker>): Promise<Worker>;
     findById(id: string): Promise<Worker | null>;
     getNewAppliers(
         page: number, limit: number, search: string, status: 'all' | 'pending' | 'approved' | 'rejected'

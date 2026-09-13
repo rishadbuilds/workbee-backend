@@ -8,9 +8,11 @@ export const ResponseMessage = {
     AUTH: {
         ALREADY_EXISTS: "Worker already exists",
         BLOCKED_WORKER: "Blocked worker",
+        REAPPLY_NOT_ALLOWED: "reapply is not allowed",
     },
 
     WORKER: {
+        NOT_FOUND:"worker not found",
         APPLIED: "Worker applied successfully!",
         REGISTERD_SUCCESSFULLY: "Worker registered successfully",
         GET_ALL_APPLIERS: "Successfully fetched all appliers",
