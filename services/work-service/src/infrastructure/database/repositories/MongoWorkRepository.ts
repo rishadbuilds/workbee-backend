@@ -1,8 +1,9 @@
 import { injectable } from "tsyringe";
-import { IWorkRepository, LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/repositories/IWorkRepository";
+import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { Work } from "../../../domain/entities/Work";
 import { WorkModel, WorkTocument } from "../models/WorkSchema";
 import { FilterQuery, PipelineStage } from "mongoose";
+import { LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/types/IWorkRepository";
 
 // Shape returned by the $geoNear aggregation — adds calculatedDistance on top of the document
 type WorkGeoResult = WorkTocument & { calculatedDistance: number };

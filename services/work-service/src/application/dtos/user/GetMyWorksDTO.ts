@@ -1,4 +1,4 @@
-import { UserWorkBucket } from "../../../domain/repositories/IWorkRepository";
+import { UserWorkBucket } from "../../../domain/types/IWorkRepository";
 
 export interface GetMyWorksParamsDTO {
   userId: string;
