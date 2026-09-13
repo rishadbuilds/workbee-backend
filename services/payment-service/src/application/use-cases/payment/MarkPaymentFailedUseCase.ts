@@ -4,10 +4,7 @@ import { IPaymentRepository } from "../../../domain/repositories/IPaymentReposit
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IMarkPaymentFailedUseCase } from "../../ports/payment/IMarkPaymentFailedUseCase";
-import {
-  MarkPaymentFailedRequestDTO,
-  MarkPaymentFailedResponseDTO,
-} from "../../dtos/payment/MarkPaymentFailedDTO";
+import {MarkPaymentFailedRequestDTO,MarkPaymentFailedResponseDTO} from "../../dtos/payment/MarkPaymentFailedDTO";
 
 @injectable()
 export class MarkPaymentFailedUseCase implements IMarkPaymentFailedUseCase {

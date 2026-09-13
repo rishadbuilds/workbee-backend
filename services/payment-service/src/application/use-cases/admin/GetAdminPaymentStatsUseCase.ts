@@ -3,14 +3,14 @@ import { IPaymentRepository } from "../../../domain/repositories/IPaymentReposit
 import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
 import { IGetAdminPaymentStatsUseCase } from "../../ports/admin/IGetAdminPaymentStatsUseCase";
 import { AdminPaymentStatsResponseDto, MonthlyAmountDto } from "../../dtos/admin/AdminPaymentStatsDTO";
+import { MONTH_LABELS } from "../../../shared/constants/MonthLabels";
 
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTHS_BACK = 6;
 const RECENT_LIMIT = 5;
 
-function buildMonthlySeries(
-    raw: { month: number; year: number; amount: number }[]
-): MonthlyAmountDto[] {
+/** builds a complete monthly time series to easly show stats */
+
+function buildMonthlySeries(raw: { month: number; year: number; amount: number }[]): MonthlyAmountDto[] {
     const now = new Date();
     const series: MonthlyAmountDto[] = [];
     for (let i = MONTHS_BACK - 1; i >= 0; i--) {

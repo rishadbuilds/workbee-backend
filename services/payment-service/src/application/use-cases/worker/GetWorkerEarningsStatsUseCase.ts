@@ -3,8 +3,8 @@ import { IWalletRepository } from "../../../domain/repositories/IWalletRepositor
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IGetWorkerEarningsStatsUseCase } from "../../ports/worker/IGetWorkerEarningsStatsUseCase";
 import { WorkerEarningsStatsResponseDto, MonthlyEarningDto } from "../../dtos/worker/WorkerEarningsStatsDTO";
+import { MONTH_LABELS } from "../../../shared/constants/MonthLabels";
 
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTHS_BACK = 6;
 
 @injectable()

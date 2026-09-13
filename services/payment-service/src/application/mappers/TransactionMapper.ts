@@ -22,7 +22,6 @@ export class TransactionMapper {
   /**
    * Types a given role should never see. Used to build the DB query
    * (WHERE type NOT IN (...)) so pagination totals stay accurate —
-   * never apply this as a post-fetch filter.
    */
   
   static getExcludedTypesForRole(role: string): string[] {
