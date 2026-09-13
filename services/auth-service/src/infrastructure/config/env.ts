@@ -12,7 +12,11 @@ export const ENV = {
     // jwt
     JWT_SECRET: getEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
-    
+
+    //email
+    EMAIL_USER: getEnv("EMAIL_USER"),
+    EMAIL_PASSKEY: getEnv("EMAIL_PASSKEY"),
+
     // service
     PORT: getEnv("PORT"),
     SERVICE_NAME: getEnv("SERVICE_NAME"),

@@ -17,6 +17,7 @@ export const ENV = {
     LOG_LEVEL : requiredEnv("LOG_LEVEL") ,
     SERVICE_NAME : requiredEnv("SERVICE_NAME"),
     NODE_ENV : requiredEnv("NODE_ENV"),
+    CORS_ORIGIN : requiredEnv("CORS_ORIGIN"),
     
 } as const;
 
