@@ -18,8 +18,7 @@ export class GetWorkerProfileStatsUseCase implements IGetWorkerProfileStatsUseCa
     const worker = await this._workerRepository.findById(workerId);
     if (!worker) throw new Error(ErrorMessages.WORKER.WORKER_NOT_FOUND);
 
-    const { works } = await this._workRepository.findByWorkerId(workerId);
-    const totalWorksCompleted = works.filter(w => w.status === "completed").length;
+    const totalWorksCompleted = await this._workRepository.countCompletedByWorkerId(workerId);
 
     const { avgRating, totalReviews } = await this._reviewRepository.getWorkerStats(workerId);
     const { reviews } = await this._reviewRepository.findByWorkerId(workerId, 1, 20);
@@ -35,5 +34,5 @@ export class GetWorkerProfileStatsUseCase implements IGetWorkerProfileStatsUseCa
         .filter(r => r.testimonial && r.testimonial.trim().length > 0)
         .map(r => ({ rating: r.rating, testimonial: r.testimonial, createdAt: r.createdAt })),
     };
-  }
+}
 }
