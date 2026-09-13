@@ -16,13 +16,8 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
   ) { }
 
   async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {
-    console.log('bla bla blaaaa')
-    // throw new Error('gotttt')
     const existingWork = await this._workRepository.findById(dto.workId);
-
-    if (!existingWork) {
-      throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
-    }
+    if (!existingWork) throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
 
     const isWorkerProgressUpdate = dto.progress !== undefined || dto.status === "in-progress" || dto.status === "completed";
 
@@ -36,22 +31,23 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       }
     }
 
-    const { workId, ...updateData } = dto;
+    // dto.userId is the ACTOR calling this endpoint (client or worker),
+    // used only for the permission check above. It must never be written
+    // to the Work document — that field is the work's original client owner.
+    
+    const { workId, userId, ...updateData } = dto;
     const updatedWork = await this._workRepository.update(workId, updateData);
     if (!updatedWork) throw new Error(ErrorMessages.WORK.FAILED_TO_UPDATE_WORK);
 
-    // notify client when worker changes work progress
-    if(dto.progress !== undefined) {
+    if (dto.progress !== undefined) {
       await this._workProgressEventPublisher.publishWorkProgressChanged({
-        workId:workId,
-        userId:existingWork.userId,
-        workerId:existingWork.workerId!,
+        workId,
+        userId: existingWork.userId,
+        workerId: existingWork.workerId!,
         progress: dto.progress,
-      })
+      });
     }
 
-    // Notify payment service when work is completed 
-    // This triggers the 1-hour delayed payout to the worker
     if (dto.progress === "completed" || dto.status === "completed") {
       this._notifyPaymentService(workId).catch((err) => {
         logger.error("[UpdateWorkUseCase] Failed to notify payment service:", err.message);
