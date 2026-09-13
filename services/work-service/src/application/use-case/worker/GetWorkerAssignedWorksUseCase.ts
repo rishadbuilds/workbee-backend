@@ -1,11 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { IGetWorkerAssignedWorksUseCase } from "../../ports/isc/IGetWorkerAssignedWorksUseCase";
-import {
-  GetWorkerAssignedWorksDto,
-  GetWorkerAssignedWorksResponseDto,
-  WorkItemDto,
-} from "../../dtos/worker/GetWorkerAssignedWorks.dtos";
+import {GetWorkerAssignedWorksDto,GetWorkerAssignedWorksResponseDto,WorkItemDto,} from "../../dtos/worker/GetWorkerAssignedWorks.dtos";
 
 const DEFAULT_LIMIT = 6;
 

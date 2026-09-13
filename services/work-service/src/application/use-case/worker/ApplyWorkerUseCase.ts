@@ -1,9 +1,12 @@
 import { inject, injectable } from "tsyringe";
-import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
-import { IHashService } from "../../../domain/services/IHashService";
+
 import { ApplyWorkerDto, WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
+
 import { WorkerMapper } from "../../mappers/WorkerMapper";
+
+import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
+import { IHashService } from "../../../domain/services/IHashService";
 import { IApplyWorkerUseCase } from "../../ports/worker/IApplyWorkerUseCase";
 
 @injectable()
@@ -29,7 +32,7 @@ export class ApplyWorkerUseCase implements IApplyWorkerUseCase{
             const worker = WorkerMapper.toEntity(dto);
             worker.password = await this._hashService.hash(worker.password);
 
-            // update the SAME document instead of inserting a new one
+            // update the same document instead of inserting a new one
             const updatedWorker = await this._workerRepository.reapply(existing.id, worker);
             return WorkerMapper.toResponseDto(updatedWorker);
         }

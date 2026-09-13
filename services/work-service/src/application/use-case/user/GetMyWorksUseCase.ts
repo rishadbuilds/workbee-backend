@@ -1,35 +1,8 @@
-// import { inject, injectable } from "tsyringe";
-// import { IGetMyWorksUseCase } from "../../ports/user/IGetMyWorksUseCase";
-// import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
-// import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-
-// @injectable()
-// export class GetMyWorksUseCase implements IGetMyWorksUseCase {
-//     constructor(
-//         @inject("WorkRepository") private readonly _workRepository: IWorkRepository
-//     ) {}
-
-//     async execute(userId: string) {
-//         const result = await this._workRepository.getMyWorks(userId);
-        
-//         if (!result.works || result.works.length === 0) {
-//             throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
-//         }
-        
-//         return result;
-//     }
-// }
-
 import { inject, injectable } from "tsyringe";
 import { IGetMyWorksUseCase } from "../../ports/user/IGetMyWorksUseCase";
-import { IWorkRepository, UserWorkBucket } from "../../../domain/repositories/IWorkRepository";
+import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
+import { GetMyWorksParamsDTO } from "../../dtos/user/GetMyWorksDTO";
 
-export interface GetMyWorksParams {
-  userId: string;
-  page?: number;
-  limit?: number;
-  bucket?: UserWorkBucket;
-}
 
 const DEFAULT_LIMIT = 6;
 
@@ -39,7 +12,7 @@ export class GetMyWorksUseCase implements IGetMyWorksUseCase {
     @inject("WorkRepository") private readonly _workRepository: IWorkRepository
   ) {}
 
-  async execute(params: GetMyWorksParams) {
+  async execute(params: GetMyWorksParamsDTO) {
     const { userId } = params;
     const page = params.page && params.page > 0 ? params.page : 1;
     const limit = params.limit && params.limit > 0 ? params.limit : DEFAULT_LIMIT;
