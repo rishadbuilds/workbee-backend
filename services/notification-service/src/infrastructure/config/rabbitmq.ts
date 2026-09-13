@@ -1,6 +1,6 @@
-// /**
-//  * rabbitmq connection and client intialization also in this file
-//  */
+/**
+* rabbitmq connection and client intialization also in this file
+*/
 
 import amqp, { Channel, ChannelModel } from 'amqplib';
 import { ENV } from './env';
