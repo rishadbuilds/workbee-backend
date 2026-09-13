@@ -36,7 +36,7 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       }
     }
 
-    const { workId, userId, ...updateData } = dto;
+    const { workId, ...updateData } = dto;
     const updatedWork = await this._workRepository.update(workId, updateData);
     if (!updatedWork) throw new Error(ErrorMessages.WORK.FAILED_TO_UPDATE_WORK);
 

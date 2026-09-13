@@ -8,7 +8,7 @@ export interface GetLiveWorksParams {
 }
 
 export interface GetLiveWorksResponseDto {
-  works: any[];
+  works: unknown[];
 
   pagination: {
     page: number;

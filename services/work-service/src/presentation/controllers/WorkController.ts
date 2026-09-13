@@ -233,11 +233,13 @@ export class WorkController implements IWorkController {
 
             const { page, limit, bucket } = req.query;
 
+            type MyWorksParams = Parameters<IGetMyWorksUseCase["execute"]>[0];
+
             const result = await this._getMyWorksUseCase.execute({
                 userId,
                 page: page ? Number(page) : undefined,
                 limit: limit ? Number(limit) : undefined,
-                bucket: bucket ? (String(bucket) as any) : undefined,
+                bucket: bucket ? (String(bucket) as MyWorksParams["bucket"]) : undefined,
             });
 
             res.status(HttpStatus.OK).json(
@@ -499,11 +501,13 @@ export class WorkController implements IWorkController {
 
             const { page, limit, bucket, startDate, endDate } = req.query;
 
+            type AssignedWorksParams = Parameters<IGetWorkerAssignedWorksUseCase["execute"]>[0];
+
             const works = await this._getWorkerAssignedWorksUseCase.execute({
                 workerId,
                 page: page ? Number(page) : undefined,
                 limit: limit ? Number(limit) : undefined,
-                bucket: bucket ? (String(bucket) as any) : undefined,
+                bucket: bucket ? (String(bucket) as AssignedWorksParams["bucket"]) : undefined,
                 startDate: startDate ? String(startDate) : undefined,
                 endDate: endDate ? String(endDate) : undefined,
             });
