@@ -4,6 +4,7 @@ import { RabbitMQConnection } from "../config/rabbitmq";
 import { MessageEventConsumer } from "./MessageEventConsumer";
 import { WorkProgressEventConsumer } from "./WorkProgressEventConsumer";
 import { PaymentEventConsumer } from "./PaymentEventConsumer";
+import { PaymentConfirmedEventConsumer } from "./PaymentConfirmedEventConsumer";
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -30,10 +31,15 @@ export class RabbitMQInitializer {
             await workProgressEventConsumer.start();
             logger.info("- Work Progress Notification Consumer started");
 
-            // inside initialize()
+            // inside credited worker side
             const paymentEventConsumer = container.resolve(PaymentEventConsumer);
             await paymentEventConsumer.start();
             logger.info("- Payment Notification Consumer started");
+
+            // payment completed by user
+            const paymentConfirmedConsumer = container.resolve(PaymentConfirmedEventConsumer);
+            await paymentConfirmedConsumer.start();
+            logger.info("- Payment Confirmed Notification Consumer started");
 
             this.isInitialized = true;
             logger.info('- Messaging Service initialized successfully');

@@ -6,13 +6,15 @@ import { IWalletRepository } from "../../../domain/repositories/IWalletRepositor
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IVerifyRazorpayPaymentUseCase } from "../../ports/payment/IVerifyRazorpayPaymentUseCase";
 import { VerifyPaymentRequestDTO, VerifyPaymentResponseDTO } from "../../dtos/payment/VerifyPaymentDTO";
+import { IEventPublisher } from "../../ports/message-bus/IEventPublisher";
 
 @injectable()
 export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCase {
   constructor(
     @inject("PaymentRepository") private paymentRepo: IPaymentRepository,
     @inject("WalletRepository") private walletRepo: IWalletRepository,
-    @inject("TransactionRepository") private txRepo: ITransactionRepository
+    @inject("TransactionRepository") private txRepo: ITransactionRepository,
+    @inject("EventPublisher") private eventPublisher: IEventPublisher
   ) { }
 
   async execute(data: VerifyPaymentRequestDTO): Promise<VerifyPaymentResponseDTO> {
@@ -69,6 +71,16 @@ export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCa
       currency: payment.currency,
       status: "pending",
       description: `Pending payout for work ${payment.workId} (releases after completion)`,
+    });
+
+    // notify worker — best-effort, doesn't block payment success
+    await this.eventPublisher.publishPaymentConfirmed({
+      workerId: payment.workerId,
+      workId: payment.workId,
+      userId: payment.userId,
+      amount: payment.amount,
+      currency: payment.currency,
+      paymentId: payment.id,
     });
 
     return { success: true, paymentId: payment.id };
