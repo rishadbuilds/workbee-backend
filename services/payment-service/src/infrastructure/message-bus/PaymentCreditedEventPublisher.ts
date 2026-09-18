@@ -6,9 +6,10 @@ import { injectable } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { IWorkerPayoutCreditedEvent } from "../../domain/message-bus/IWorkerPayoutCreditedEvent";
 import { logger } from "../logger/logger";
+import { IEventPublisher } from "../../application/ports/message-bus/IEventPublisher";
 
 @injectable()
-export class EventPublisher {
+export class EventPublisher implements IEventPublisher{
   private readonly EXCHANGE = "workbee.events";
 
   async publishWorkerPayoutCredited(event: IWorkerPayoutCreditedEvent): Promise<void> {

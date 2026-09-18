@@ -8,7 +8,7 @@ import { ITransactionRepository } from "../../../domain/repositories/ITransactio
 import { IReleaseWorkerPayoutUseCase } from "../../ports/worker/IReleaseWorkerPayoutUseCase";
 
 import { ReleaseWorkerPayoutRequestDTO, ReleaseWorkerPayoutResponseDTO } from "../../dtos/worker/WorkerPayoutDTO";
-import { EventPublisher } from "../../../infrastructure/message-bus/PaymentCreditedEventPublisher";
+import { IEventPublisher } from "../../ports/message-bus/IEventPublisher";
 
 @injectable()
 export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
@@ -17,7 +17,7 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
     @inject("WalletRepository") private walletRepo: IWalletRepository,
     @inject("TransactionRepository") private txRepo: ITransactionRepository,
     @inject("PlatformEarningRepository") private platformEarningRepo: IPlatformEarningRepository,
-    @inject("EventPublisher") private eventPublisher: EventPublisher
+    @inject("EventPublisher") private eventPublisher: IEventPublisher
   ) { }
 
   async execute(data: ReleaseWorkerPayoutRequestDTO): Promise<ReleaseWorkerPayoutResponseDTO> {

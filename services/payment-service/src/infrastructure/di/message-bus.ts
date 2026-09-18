@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { EventPublisher } from '../message-bus/PaymentCreditedEventPublisher';
+import { IEventPublisher } from '../../application/ports/message-bus/IEventPublisher';
 
-container.registerSingleton("EventPublisher", EventPublisher);
+container.registerSingleton<IEventPublisher>("EventPublisher", EventPublisher);
 
 export { container };
