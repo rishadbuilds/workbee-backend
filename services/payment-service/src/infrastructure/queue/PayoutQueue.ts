@@ -47,9 +47,7 @@ export const startPayoutWorker = (): void => {
     async (job: Job) => {
       const { paymentId } = job.data;
 
-      logger.info(
-        `[PayoutWorker] Processing payout for payment ${paymentId}`
-      );
+      logger.info(`[PayoutWorker] Processing payout for payment ${paymentId}`);
 
       try {
         const releaseUseCase =
@@ -57,13 +55,9 @@ export const startPayoutWorker = (): void => {
 
         await releaseUseCase.execute({ paymentId });
 
-        logger.info(
-          `[PayoutWorker] Payout complete for payment ${paymentId}`
-        );
+        logger.info(`[PayoutWorker] Payout complete for payment ${paymentId}`);
       } catch (error) {
-        logger.error(
-          `[PayoutWorker] Failed payout for payment ${paymentId}`
-        );
+        logger.error(`[PayoutWorker] Failed payout for payment ${paymentId}`);
 
         console.error(error);
 
@@ -78,16 +72,12 @@ export const startPayoutWorker = (): void => {
   );
 
   payoutWorker.on("completed", (job) => {
-    logger.info(
-      `[PayoutWorker] Job ${job.id} completed`
-    );
+    logger.info(`[PayoutWorker] Job ${job.id} completed`);
   });
 
   payoutWorker.on("failed", (job, err) => {
     logger.error(`[PayoutWorker] Job ${job?.id} failed:`, err.message);
   });
 
-  logger.info(
-    "[PayoutWorker] Worker started, listening for payout jobs"
-  );
+  logger.info("[PayoutWorker] Worker started, listening for payout jobs");
 };

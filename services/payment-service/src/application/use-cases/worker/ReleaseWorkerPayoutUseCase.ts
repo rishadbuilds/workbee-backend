@@ -96,25 +96,16 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
     // - Complete worker hold transaction
 
     try {
-      const holdTxs = await this.txRepo.findByWorkId(
-        payment.workId
-      );
+      const holdTxs = await this.txRepo.findByWorkId(payment.workId);
 
-      const holdTx = holdTxs.find(
-        tx => tx.type === "hold" && tx.status === "pending"
-      );
+      const holdTx = holdTxs.find(tx => tx.type === "hold" && tx.status === "pending");
 
       if (holdTx) {
-        await this.txRepo.updateStatus(
-          holdTx.id,
-          "completed"
-        );
+        await this.txRepo.updateStatus(holdTx.id,"completed");
       }
 
     } catch (err) {
-      logger.error("ReleaseWorkerPayout - Could not update hold tx status:",
-        err
-      );
+      logger.error("ReleaseWorkerPayout - Could not update hold tx status:",err);
     }
 
     logger.info(`ReleaseWorkerPayout - Released ₹${payment.workerPayout} to worker ${payment.workerId}`);
