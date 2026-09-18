@@ -8,6 +8,7 @@ import { ITransactionRepository } from "../../../domain/repositories/ITransactio
 import { IReleaseWorkerPayoutUseCase } from "../../ports/worker/IReleaseWorkerPayoutUseCase";
 
 import { ReleaseWorkerPayoutRequestDTO, ReleaseWorkerPayoutResponseDTO } from "../../dtos/worker/WorkerPayoutDTO";
+import { EventPublisher } from "../../../infrastructure/message-bus/PaymentCreditedEventPublisher";
 
 @injectable()
 export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
@@ -15,7 +16,8 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
     @inject("PaymentRepository") private paymentRepo: IPaymentRepository,
     @inject("WalletRepository") private walletRepo: IWalletRepository,
     @inject("TransactionRepository") private txRepo: ITransactionRepository,
-    @inject("PlatformEarningRepository") private platformEarningRepo: IPlatformEarningRepository
+    @inject("PlatformEarningRepository") private platformEarningRepo: IPlatformEarningRepository,
+    @inject("EventPublisher") private eventPublisher: EventPublisher
   ) { }
 
   async execute(data: ReleaseWorkerPayoutRequestDTO): Promise<ReleaseWorkerPayoutResponseDTO> {
@@ -30,13 +32,13 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
 
     // - client: remove money from pending
 
-    const userWallet = await this.walletRepo.findOrCreate(payment.userId,"user");
+    const userWallet = await this.walletRepo.findOrCreate(payment.userId, "user");
 
-    await this.walletRepo.updatePendingBalance(userWallet.id,-payment.amount);
+    await this.walletRepo.updatePendingBalance(userWallet.id, -payment.amount);
 
     // - worker: move pending → available balance
 
-    const workerWallet = await this.walletRepo.findOrCreate(payment.workerId,"worker");
+    const workerWallet = await this.walletRepo.findOrCreate(payment.workerId, "worker");
 
     await this.walletRepo.movePendingToBalance(
       workerWallet.id,
@@ -88,10 +90,21 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
 
     // - Mark payment as released
 
-    await this.paymentRepo.updateStatus(payment.id, "worker_credited",{
-        payoutCompletedAt: new Date(),
-      }
+    await this.paymentRepo.updateStatus(payment.id, "worker_credited", {
+      payoutCompletedAt: new Date(),
+    }
     );
+
+
+    // - notify worker (best-effort, non-blocking of payout success)
+
+    await this.eventPublisher.publishWorkerPayoutCredited({
+      workerId: payment.workerId,
+      workId: payment.workId,
+      amount: payment.workerPayout,
+      currency: payment.currency,
+      paymentId: payment.id,
+    });
 
     // - Complete worker hold transaction
 
@@ -101,11 +114,11 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
       const holdTx = holdTxs.find(tx => tx.type === "hold" && tx.status === "pending");
 
       if (holdTx) {
-        await this.txRepo.updateStatus(holdTx.id,"completed");
+        await this.txRepo.updateStatus(holdTx.id, "completed");
       }
 
     } catch (err) {
-      logger.error("ReleaseWorkerPayout - Could not update hold tx status:",err);
+      logger.error("ReleaseWorkerPayout - Could not update hold tx status:", err);
     }
 
     logger.info(`ReleaseWorkerPayout - Released ₹${payment.workerPayout} to worker ${payment.workerId}`);

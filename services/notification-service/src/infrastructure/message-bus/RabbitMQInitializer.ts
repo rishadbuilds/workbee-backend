@@ -3,6 +3,7 @@ import { logger } from "../config/logger";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { MessageEventConsumer } from "./MessageEventConsumer";
 import { WorkProgressEventConsumer } from "./WorkProgressEventConsumer";
+import { PaymentEventConsumer } from "./PaymentEventConsumer";
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -18,7 +19,7 @@ export class RabbitMQInitializer {
             logger.info('- RabbitMQ connected');
 
             /** consumers */
-            
+
             // msg 
             const messageConsumer = container.resolve(MessageEventConsumer);
             await messageConsumer.start();
@@ -28,6 +29,11 @@ export class RabbitMQInitializer {
             const workProgressEventConsumer = container.resolve(WorkProgressEventConsumer);
             await workProgressEventConsumer.start();
             logger.info("- Work Progress Notification Consumer started");
+
+            // inside initialize()
+            const paymentEventConsumer = container.resolve(PaymentEventConsumer);
+            await paymentEventConsumer.start();
+            logger.info("- Payment Notification Consumer started");
 
             this.isInitialized = true;
             logger.info('- Messaging Service initialized successfully');
