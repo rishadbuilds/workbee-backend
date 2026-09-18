@@ -6,7 +6,7 @@ import { IRespondToBidUseCase } from '../../ports/bid/IRespondToBidUseCase';
 import { RespondToBidDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 import { UserRole } from 'workbee-common';
 import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
-import { BidEventPublisher } from '../../../infrastructure/message-bus/BidEventPublisher';
+import { IBidEventPublisher } from '../../ports/message-bus/IBidEventPublisher';
 
 @injectable()
 export class RespondToBidUseCase implements IRespondToBidUseCase {
@@ -14,7 +14,7 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
     @inject('BidRepository') private readonly _bidRepository: IBidRepository,
     @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
     @inject('ChatRepository') private readonly _chatRepository: IChatRepository,
-    @inject('BidEventPublisher') private readonly _bidEventPublisher: BidEventPublisher
+    @inject('BidEventPublisher') private readonly _bidEventPublisher: IBidEventPublisher
 
   ) { }
 

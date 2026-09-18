@@ -3,9 +3,10 @@ import { RabbitMQConnection } from '../config/rabbitmq';
 import { IBidOfferEvent } from '../../domain/message-contracts/IBidOfferEvent';
 import { logger } from '../logger/logger';
 import { IBidResponseEvent } from '../../domain/message-contracts/IBidResponseEvent';
+import { IBidEventPublisher } from '../../application/ports/message-bus/IBidEventPublisher';
 
 @injectable()
-export class BidEventPublisher {
+export class BidEventPublisher implements IBidEventPublisher{
     private readonly EXCHANGE = 'workbee.events';
     private readonly ROUTING_KEY = 'bid.offer';
 
