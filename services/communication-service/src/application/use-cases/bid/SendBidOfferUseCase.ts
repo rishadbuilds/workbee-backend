@@ -115,7 +115,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
       offeredBy: data.offeredBy,
       recipientId,
       recipientRole,
-      senderName: data.offeredBy === UserRole.WORKER ? bid.workerName : 'Client', // adjust if you have the user's name on hand
+      senderName: data.offeredBy === UserRole.WORKER ? bid.workerName : 'Client',
     });
 
     return { bid, systemMessageContent: JSON.stringify({ ...JSON.parse(systemMessageContent), messageId: message.id }) };

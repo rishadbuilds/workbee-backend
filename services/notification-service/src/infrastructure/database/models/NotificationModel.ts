@@ -9,7 +9,7 @@ const NotificationSchema = new Schema<NotificationDocument>(
     userId: { type: String, required: true, index: true },
     type: {
       type: String,
-      enum: ['NEW_MESSAGE', 'WORK_UPDATE', 'BOOKING_UPDATE', 'PAYMENT', 'BID_OFFER'],
+      enum: ['NEW_MESSAGE', 'WORK_UPDATE', 'BOOKING_UPDATE', 'PAYMENT', 'BID_OFFER',  "BID_RESPONSE" ],
       required: true
     },
     title: { type: String, required: true },

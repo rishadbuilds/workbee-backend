@@ -3,7 +3,7 @@ import { UserRole } from "workbee-common";
 export interface Notification {
   id: string;
   userId: string;
-  type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_UPDATE' | 'PAYMENT' | 'BID_OFFER';
+  type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_UPDATE' | 'PAYMENT' | 'BID_OFFER'  | "BID_RESPONSE" ;
   title: string;
   message: string;
   data?: {

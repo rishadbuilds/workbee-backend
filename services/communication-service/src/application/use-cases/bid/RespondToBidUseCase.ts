@@ -6,14 +6,17 @@ import { IRespondToBidUseCase } from '../../ports/bid/IRespondToBidUseCase';
 import { RespondToBidDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 import { UserRole } from 'workbee-common';
 import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
+import { BidEventPublisher } from '../../../infrastructure/message-bus/BidEventPublisher';
 
 @injectable()
 export class RespondToBidUseCase implements IRespondToBidUseCase {
   constructor(
     @inject('BidRepository') private readonly _bidRepository: IBidRepository,
     @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
-    @inject('ChatRepository') private readonly _chatRepository: IChatRepository
-  ) {}
+    @inject('ChatRepository') private readonly _chatRepository: IChatRepository,
+    @inject('BidEventPublisher') private readonly _bidEventPublisher: BidEventPublisher
+
+  ) { }
 
   async execute(data: RespondToBidDTO): Promise<BidActionResult> {
     const bid = await this._bidRepository.findById(data.bidId);
@@ -54,6 +57,23 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
       bid.chatId,
       data.action === 'accept' ? `Offer of ₹${bid.amount} accepted` : `Offer of ₹${bid.amount} rejected`
     );
+
+    // notify whoever made the offer being responded to
+    const recipientId = data.respondedBy === UserRole.WORKER ? bid.userId : bid.workerId;
+    const recipientRole = data.respondedBy === UserRole.WORKER ? UserRole.USER : UserRole.WORKER;
+
+    await this._bidEventPublisher.publishBidResponse({
+      bidId: bid.id!,
+      chatId: bid.chatId,
+      workId: bid.workId,
+      workTitle: bid.workTitle,
+      amount: bid.amount,
+      action: data.action,
+      respondedBy: data.respondedBy,
+      recipientId,
+      recipientRole,
+      responderName: data.respondedBy === UserRole.WORKER ? bid.workerName : 'Client',
+    });
 
     return {
       bid: updated!,

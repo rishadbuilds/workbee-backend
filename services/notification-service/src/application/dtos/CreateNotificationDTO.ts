@@ -6,6 +6,7 @@ export type NotificationType =
   | "BOOKING_UPDATE"
   | "PAYMENT"
   | "BID_OFFER"
+  | "BID_RESPONSE"
 
 export type SenderRole = UserRole.WORKER | UserRole.USER;
 
@@ -18,7 +19,7 @@ export interface NotificationDataDTO {
   workerId?: string;
   progress?: "started" | "ongoing" | "completed";
   bidId?: string;
-  amount?: number; 
+  amount?: number;
 }
 
 export interface CreateNotificationDTO {

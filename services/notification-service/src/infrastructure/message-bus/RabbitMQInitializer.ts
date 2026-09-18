@@ -6,6 +6,7 @@ import { WorkProgressEventConsumer } from "./WorkProgressEventConsumer";
 import { PaymentEventConsumer } from "./PaymentEventConsumer";
 import { PaymentConfirmedEventConsumer } from "./PaymentConfirmedEventConsumer";
 import { BidOfferEventConsumer } from "./BidOfferEventConsumer";
+import { BidResponseEventConsumer } from "./BidResponseEventConsumer";
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -46,6 +47,11 @@ export class RabbitMQInitializer {
             const bidOfferConsumer = container.resolve(BidOfferEventConsumer);
             await bidOfferConsumer.start();
             logger.info("- Bid Offer Notification Consumer started");
+
+            // bid response publisher
+            const bidResponseConsumer = container.resolve(BidResponseEventConsumer);
+            await bidResponseConsumer.start();
+            logger.info("- Bid Response Notification Consumer started");
 
             this.isInitialized = true;
             logger.info('- Messaging Service initialized successfully');
