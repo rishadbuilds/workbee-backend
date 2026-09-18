@@ -6,14 +6,17 @@ import { ISendBidOfferUseCase } from '../../ports/bid/ISendBidOfferUseCase';
 import { SendBidOfferDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 import { UserRole } from 'workbee-common';
 import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
+import { BidEventPublisher } from '../../../infrastructure/message-bus/BidEventPublisher';
 
 @injectable()
 export class SendBidOfferUseCase implements ISendBidOfferUseCase {
   constructor(
     @inject('BidRepository') private readonly _bidRepository: IBidRepository,
     @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
-    @inject('ChatRepository') private readonly _chatRepository: IChatRepository
-  ) {}
+    @inject('ChatRepository') private readonly _chatRepository: IChatRepository,
+    @inject('BidEventPublisher') private readonly _bidEventPublisher: BidEventPublisher
+
+  ) { }
 
   async execute(data: SendBidOfferDTO): Promise<BidActionResult> {
     if (!data.amount || data.amount <= 0) {
@@ -98,6 +101,22 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
       data.chatId,
       isCounter ? `Countered with ₹${bid.amount}` : `Offered ₹${bid.amount}`
     );
+
+    // notify the other party
+    const recipientId = data.offeredBy === UserRole.WORKER ? bid.userId : bid.workerId;
+    const recipientRole = data.offeredBy === UserRole.WORKER ? UserRole.USER : UserRole.WORKER;
+
+    await this._bidEventPublisher.publishBidOffer({
+      bidId: bid.id!,
+      chatId: data.chatId,
+      workId: bid.workId,
+      workTitle: bid.workTitle,
+      amount: bid.amount,
+      offeredBy: data.offeredBy,
+      recipientId,
+      recipientRole,
+      senderName: data.offeredBy === UserRole.WORKER ? bid.workerName : 'Client', // adjust if you have the user's name on hand
+    });
 
     return { bid, systemMessageContent: JSON.stringify({ ...JSON.parse(systemMessageContent), messageId: message.id }) };
   }
