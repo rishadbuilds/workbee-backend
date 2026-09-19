@@ -1,37 +1,36 @@
 import { inject, injectable } from "tsyringe";
-import Razorpay from "razorpay";
 
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
+import { IPlatformFeeCalculator } from "../../../domain/services/Iplatformfeecalculator";
+import { IPaymentGateway } from "../../ports/payment-gateways/Ipaymentgateway";
 import { ICreateRazorpayOrderUseCase } from "../../ports/user/ICreateRazorpayOrderUseCase";
-import { CreateOrderRequestDTO,CreateOrderResponseDTO } from "../../dtos/payment/CreateOrderDTO";
-
-const PLATFORM_FEE_PERCENT = 0.01;
+import {CreateOrderRequestDTO,CreateOrderResponseDTO,} from "../../dtos/payment/CreateOrderDTO";
+import { DEFAULT_CURRENCY, MINOR_UNITS_PER_MAJOR_UNIT } from "../../../shared/constants/Payment";
 
 @injectable()
 export class CreateRazorpayOrderUseCase implements ICreateRazorpayOrderUseCase {
-  
-  private razorpay: Razorpay;
-
   constructor(
-    @inject("PaymentRepository") private paymentRepo: IPaymentRepository
-  ) {
-    this.razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID!,
-      key_secret: process.env.RAZORPAY_KEY_SECRET!,
-    });
-  }
+    @inject("PaymentRepository") private readonly paymentRepo: IPaymentRepository,
+    @inject("PaymentGateway") private readonly paymentGateway: IPaymentGateway,
+    @inject("PlatformFeeCalculator") private readonly feeCalculator: IPlatformFeeCalculator
+  ) {}
 
   async execute(data: CreateOrderRequestDTO): Promise<CreateOrderResponseDTO> {
-    const currency = (data.currency || "INR").toUpperCase();
-    const amountPaise = Math.round(data.amount * 100);
-    const platformFee = parseFloat((data.amount * PLATFORM_FEE_PERCENT).toFixed(2));
-    const workerPayout = parseFloat((data.amount - platformFee).toFixed(2));
+    const currency = (data.currency || DEFAULT_CURRENCY).toUpperCase();
+    const amountInMinorUnits = Math.round(
+      data.amount * MINOR_UNITS_PER_MAJOR_UNIT
+    );
+    const { platformFee, workerPayout } = this.feeCalculator.calculate(data.amount);
 
-    const order = await this.razorpay.orders.create({
-      amount: amountPaise,
+    const order = await this.paymentGateway.createOrder({
+      amount: amountInMinorUnits,
       currency,
       receipt: `work_${data.workId}`,
-      notes: { workId: data.workId, userId: data.userId, workerId: data.workerId },
+      notes: {
+        workId: data.workId,
+        userId: data.userId,
+        workerId: data.workerId,
+      },
     });
 
     const payment = await this.paymentRepo.create({
@@ -48,9 +47,9 @@ export class CreateRazorpayOrderUseCase implements ICreateRazorpayOrderUseCase {
 
     return {
       orderId: order.id,
-      amount: amountPaise,
+      amount: amountInMinorUnits,
       currency,
-      keyId: process.env.RAZORPAY_KEY_ID!,
+      keyId: this.paymentGateway.getPublicKey(),
       paymentId: payment.id,
     };
   }
