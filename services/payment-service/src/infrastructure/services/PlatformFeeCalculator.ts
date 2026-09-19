@@ -1,8 +1,7 @@
 import { IPlatformFeeCalculator,PaymentBreakdown } from "../../domain/services/Iplatformfeecalculator";
 
 /**
- * Pure business rule: no framework, SDK or environment access.
- * `feeRate` is a fraction (0.01 = 1%).
+ * feeRate is a fraction (0.01 = 1%).
  */
 
 export class PlatformFeeCalculator implements IPlatformFeeCalculator {
