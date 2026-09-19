@@ -35,23 +35,23 @@ app.use(verifyToken);
 const services = [
     {
         route: "/auth",
-        target: process.env.AUTH_SERVICE
+        target: ENV.AUTH_SERVICE
     },
     {
         route: "/work",
-        target: process.env.WORK_SERVICE
+        target: ENV.WORK_SERVICE
     },
     {
         route:"/communication",
-        target: process.env.COMMUNICATION_SERVICE
+        target: ENV.COMMUNICATION_SERVICE
     },
     {
         route:"/notification",
-        target: process.env.NOTIFICATION_SERVICE
+        target: ENV.NOTIFICATION_SERVICE
     },
     {
         route:"/payment",
-        target: process.env.PAYMENT_SERVICE
+        target: ENV.PAYMENT_SERVICE
     },
 ];
 
