@@ -1,3 +1,4 @@
+import { Address } from "../../../domain/entities/Address";
 
 /** worker change password consumer types */
 export interface ChangePasswordRequest {
@@ -15,8 +16,8 @@ export interface ChangePasswordResponse {
 
 /** worker block event */
 export interface IWorkerBlockedEvent {
-  workerId: string;
-  isBlocked: boolean;
+    workerId: string;
+    isBlocked: boolean;
 }
 
 /** worker validation consumer */
@@ -34,9 +35,9 @@ export interface WorkerLoginResponse {
         name: string;
         email: string;
         phone: string;
-        role: string;
-        location: string;
-        workType: string;
+        role: "worker";
+        address: Address;
+        workTypes: string[];
         preferredWorks: string[];
         status: string;
     };

@@ -111,6 +111,7 @@ export class WorkerValidationConsumer {
         const workerId = worker.id;
 
         // Return worker data 
+    
         return {
             success: true,
             data: {
@@ -119,8 +120,8 @@ export class WorkerValidationConsumer {
                 email: worker.email,
                 phone: worker.phone,
                 role: "worker",
-                location: worker.location,
-                workType: worker.workType,
+                address: worker.address,
+                workTypes: worker.workTypes,
                 preferredWorks: worker.preferredWorks,
                 status: worker.status
             }
