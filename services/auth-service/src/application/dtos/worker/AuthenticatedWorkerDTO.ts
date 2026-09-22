@@ -1,4 +1,5 @@
 import { UserRole } from "workbee-common";
+import { WorkerAddressDTO } from "./WorkerAddressDTO";
 
 export interface AuthenticatedWorkerDTO {
   id: string;
@@ -6,8 +7,8 @@ export interface AuthenticatedWorkerDTO {
   email: string;
   phone: string;
   role: UserRole.WORKER;
-  location: string;
-  workType: string;
+  address: WorkerAddressDTO;
+  workTypes: string[];
   preferredWorks: string[];
   status: string;
 }

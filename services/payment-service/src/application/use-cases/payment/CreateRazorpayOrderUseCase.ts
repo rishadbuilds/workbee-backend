@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { IPlatformFeeCalculator } from "../../../domain/services/Iplatformfeecalculator";
-import { IPaymentGateway } from "../../ports/payment-gateways/Ipaymentgateway";
+import { IPaymentGateway } from "../../ports/payment-gateways/IPaymentGateway";
 import { ICreateRazorpayOrderUseCase } from "../../ports/user/ICreateRazorpayOrderUseCase";
 import {CreateOrderRequestDTO,CreateOrderResponseDTO,} from "../../dtos/payment/CreateOrderDTO";
 import { DEFAULT_CURRENCY, MINOR_UNITS_PER_MAJOR_UNIT } from "../../../shared/constants/Payment";

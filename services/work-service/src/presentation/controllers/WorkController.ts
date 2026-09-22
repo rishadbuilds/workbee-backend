@@ -404,6 +404,25 @@ export class WorkController implements IWorkController {
         }
     }
 
+    // async updateWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    //     try {
+    //         const userId = req.headers["x-user-id"];
+
+    //         if (!userId || typeof userId !== "string") {
+    //             throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+    //         }
+
+    //         const { name, phone, address, bio } = req.body;
+
+    //         const updateWorkerProfileData: UpdateWorkerProfileReqDTO = { userId, name, phone, address, bio, };
+
+    //         const result = await this._updateWorkerProfileUseCase.execute(updateWorkerProfileData);
+
+    //         res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // }
     async updateWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers["x-user-id"];
@@ -412,13 +431,22 @@ export class WorkController implements IWorkController {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
-            const { name, phone, location, bio } = req.body;
+            const { name, phone, address, workTypes, bio } = req.body;
 
-            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = { userId, name, phone, location, bio, };
+            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = {
+                userId,
+                name,
+                phone,
+                address,
+                workTypes,
+                bio,
+            };
 
             const result = await this._updateWorkerProfileUseCase.execute(updateWorkerProfileData);
 
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result,ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
         } catch (error) {
             next(error);
         }

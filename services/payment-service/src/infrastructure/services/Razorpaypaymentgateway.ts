@@ -1,8 +1,14 @@
 import Razorpay from "razorpay";
 import { inject, injectable } from "tsyringe";
 
-import {CreateGatewayOrderInput,GatewayOrder,IPaymentGateway,} from "../../application/ports/payment-gateways/Ipaymentgateway";
 import { RazorpayConfig } from "../config/razorpay";
+// import { CreateGatewayOrderInput, GatewayOrder, IPaymentGateway } from "../../application/ports/payment-gateways/Ipaymentgateway";
+
+import {
+  CreateGatewayOrderInput,
+  GatewayOrder,
+  IPaymentGateway,
+} from "../../application/ports/payment-gateways/IPaymentGateway";
 
 @injectable()
 export class RazorpayPaymentGateway implements IPaymentGateway {

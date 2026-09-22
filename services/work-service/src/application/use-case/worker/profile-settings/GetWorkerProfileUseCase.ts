@@ -6,7 +6,7 @@ import { GetWorkerProfileSettingsDto, WorkerProfileSettingsResponseDto } from ".
 
 
 @injectable()
-export class GetWorkerProfileSettingsUseCase implements IGetWorkerProfileSettingsUseCase{
+export class GetWorkerProfileSettingsUseCase implements IGetWorkerProfileSettingsUseCase {
     constructor(
         @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
     ) { }
@@ -22,8 +22,10 @@ export class GetWorkerProfileSettingsUseCase implements IGetWorkerProfileSetting
             email: worker.email,
             phone: worker.phone,
             bio: worker.bio,
-            location: worker.location,
-            workType: worker.workType,
+            // location: worker.location,
+            // workType: worker.workType,
+            address: worker.address,
+            workTypes: worker.workTypes,
             preferredWorks: worker.preferredWorks,
             workerProfileImage: worker.workerProfileImage,
             workerProfileImagePublicId: worker.workerProfileImagePublicId,

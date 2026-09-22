@@ -1,3 +1,5 @@
+import { Address } from "../../../domain/entities/Address";
+
 export interface GetWorkerProfileSettingsDto {
     workerId: string;
 }
@@ -7,8 +9,10 @@ export interface WorkerProfileSettingsResponseDto {
     name: string;
     email: string;
     phone: string;
-    location: string;
-    workType: string;
+    // location: string;
+    // workType: string;
+    address: Address;
+    workTypes: string[];
     bio?:string;
     preferredWorks: string[];
     workerProfileImage?: string;

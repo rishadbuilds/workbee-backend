@@ -4,7 +4,8 @@ export interface UpdateWorkerProfileReqDTO {
   userId: string;
   name: string;
   phone: string;
-  location: string;
+  address: Address;
+  workTypes: string[];
   bio: string;
 }
 
