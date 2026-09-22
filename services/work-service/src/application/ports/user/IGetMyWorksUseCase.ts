@@ -1,10 +1,3 @@
-// import { Work } from "../../../domain/entities/Work";
-// import { GetMyWorksParamsDTO } from "../../dtos/user/GetMyWorksDTO";
-
-// export interface IGetMyWorksUseCase {
-//     execute(params: GetMyWorksParamsDTO): Promise<{ works: Work[] | null }>;
-// }
-
 import { Work } from "../../../domain/entities/Work";
 import { GetMyWorksParamsDTO } from "../../dtos/user/GetMyWorksDTO";
 

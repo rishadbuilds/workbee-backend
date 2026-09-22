@@ -9,8 +9,6 @@ export interface WorkerProfileSettingsResponseDto {
     name: string;
     email: string;
     phone: string;
-    // location: string;
-    // workType: string;
     address: Address;
     workTypes: string[];
     bio?:string;

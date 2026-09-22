@@ -22,8 +22,6 @@ export class GetWorkerProfileSettingsUseCase implements IGetWorkerProfileSetting
             email: worker.email,
             phone: worker.phone,
             bio: worker.bio,
-            // location: worker.location,
-            // workType: worker.workType,
             address: worker.address,
             workTypes: worker.workTypes,
             preferredWorks: worker.preferredWorks,

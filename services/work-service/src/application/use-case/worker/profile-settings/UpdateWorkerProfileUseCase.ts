@@ -21,7 +21,6 @@ export class UpdateWorkerProfileUseCase implements IUpdateWorkerProfileUseCase {
         const updatedWorker = await this._workerRepository.updateWorkerProfile(data.userId, {
                 name: data.name.trim(),
                 phone: data.phone.trim(),
-                // location: data.location.trim(),
                 address: data.address,
                 bio: data.bio.trim(),
             });
