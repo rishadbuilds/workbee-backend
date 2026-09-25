@@ -16,9 +16,11 @@ export const ENV = {
   PORT: getEnvVariable("PORT"),
   NODE_ENV: getEnvVariable("NODE_ENV"),
   SERVICE_NAME: getEnvVariable("SERVICE_NAME"),
+
   LOG_LEVEL: getEnvVariable("LOG_LEVEL"),
-  LOGSTASH_HOST: getEnvVariable("LOGSTASH_HOST"),
-  LOGSTASH_PORT: getEnvVariable("LOGSTASH_PORT"),
+  LOGSTASH_HOST: process.env.LOGSTASH_HOST,
+  LOGSTASH_PORT: process.env.LOGSTASH_PORT,
+
   MONGO_URI: getEnvVariable("MONGO_URI"),
 
   // cloudinary 

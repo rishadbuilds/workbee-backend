@@ -27,8 +27,8 @@ export const ENV = {
     // logging
     LOG_LEVEL: getEnv("LOG_LEVEL"),
     NODE_ENV: getEnv("NODE_ENV"),
-    LOGSTASH_HOST: getEnv("LOGSTASH_HOST"),
-    LOGSTASH_PORT: getEnv("LOGSTASH_PORT"),
+    LOGSTASH_HOST: process.env.LOGSTASH_HOST,
+    LOGSTASH_PORT: process.env.LOGSTASH_PORT,
 
     // DB
     MONGO_URI: getEnv("MONGO_URI"),

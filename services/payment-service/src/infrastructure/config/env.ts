@@ -1,7 +1,7 @@
-function getEnv(name:string):string {
+function getEnv(name: string): string {
     const value = process.env[name]
 
-    if(!value) {
+    if (!value) {
         throw new Error(`${name} is missing`)
     }
 
@@ -9,7 +9,7 @@ function getEnv(name:string):string {
 }
 
 function getOptionalEnv(name: string): string | undefined {
-  return process.env[name] || undefined;
+    return process.env[name] || undefined;
 }
 
 export const ENV = {
@@ -24,14 +24,14 @@ export const ENV = {
     // jwt
     JWT_SECRET: getEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
-    
+
     // rabbitmq
     RABBITMQ_URL: getEnv("RABBITMQ_URL"),
 
     // logstash
     LOG_LEVEL: getEnv("LOG_LEVEL"),
-    LOGSTASH_HOST: getEnv("LOGSTASH_HOST"),
-    LOGSTASH_PORT: getEnv("LOGSTASH_PORT"),
+    LOGSTASH_HOST: process.env.LOGSTASH_HOST,
+    LOGSTASH_PORT: process.env.LOGSTASH_PORT,
 
     // redis
     REDIS_PASSWORD: getOptionalEnv("REDIS_PASSWORD"),

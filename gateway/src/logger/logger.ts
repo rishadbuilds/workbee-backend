@@ -18,25 +18,30 @@ const consoleTransport = new winston.transports.Console({
         timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         errors({ stack: true }),
         printf(({ timestamp, level, message, stack, service }) => {
-          return `[${timestamp}] [${service}] ${level}: ${stack ?? message}`;
+          return `[${timestamp}] [${service}] ${level}: ${
+            stack ?? message
+          }`;
         })
       ),
 });
 
-const logstashTransport = new LogstashTransport({
-  host: ENV.LOGSTASH_HOST,
-  port: Number(ENV.LOGSTASH_PORT),
-});
+const transports: winston.transport[] = [consoleTransport];
+
+if (ENV.LOGSTASH_HOST && ENV.LOGSTASH_PORT) {
+  transports.push(
+    new LogstashTransport({
+      host: ENV.LOGSTASH_HOST,
+      port: Number(ENV.LOGSTASH_PORT),
+    })
+  );
+}
 
 export const logger = winston.createLogger({
-  level: ENV.LOG_LEVEL,
+  level: ENV.LOG_LEVEL || (isProduction ? "info" : "debug"),
 
   defaultMeta: {
     service: ENV.SERVICE_NAME,
   },
 
-  transports: [
-    consoleTransport,
-    logstashTransport,
-  ],
+  transports,
 });

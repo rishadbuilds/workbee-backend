@@ -25,7 +25,15 @@ export class SocketGateway {
   private typingHandler: TypingHandler;
 
   constructor(httpServer: HttpServer) {
+    // this.io = new Server(httpServer, {
+    //   cors: {
+    //     origin: process.env.CORS_ORIGIN,
+    //     credentials: true,
+    //     methods: ['GET', 'POST'],
+    //   },
+    // });
     this.io = new Server(httpServer, {
+      path: '/communication/socket.io',
       cors: {
         origin: process.env.CORS_ORIGIN,
         credentials: true,
