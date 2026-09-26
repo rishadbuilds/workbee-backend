@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: workbee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: rishadkarappa/workbee-payment:latest
+
+          ports:
+            - containerPort: 4005
+              name: http
+
+          env:
+            - name: SERVICE_NAME
+              value: "payment-service"
+
+            - name: NODE_ENV
+              value: "production"
+
+            - name: LOG_LEVEL
+              value: "debug"
+
+            - name: PORT
+              value: "4005"
+
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DATABASE_URL
+
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq"
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: JWT_SECRET
+
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: JWT_REFRESH_SECRET
+
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DB_USER
+
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DB_HOST
+
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DB_NAME
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DB_PASSWORD
+
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: DB_PORT
+
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_HOST
+
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_PORT
+
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_PASSWORD
+
+            - name: RAZORPAY_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: RAZORPAY_KEY_ID
+
+            - name: RAZORPAY_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: RAZORPAY_KEY_SECRET
+
+            - name: CORS_ORIGIN
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CORS_ORIGIN
+
+            - name: FRONTEND_URL
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CORS_ORIGIN
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi

@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: work-service
+  namespace: workbee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: work-service
+  template:
+    metadata:
+      labels:
+        app: work-service
+    spec:
+      containers:
+        - name: work-service
+          image: rishadkarappa/workbee-work:latest
+
+          ports:
+            - containerPort: 4002
+              name: http
+
+          env:
+            - name: SERVICE_NAME
+              value: "work-service"
+
+            - name: NODE_ENV
+              value: "production"
+
+            - name: LOG_LEVEL
+              value: "debug"
+
+            - name: PORT
+              value: "4002"
+
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: WORK_MONGO_URI
+
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq"
+
+            - name: EMAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: EMAIL_USER
+
+            - name: EMAIL_PASSKEY
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: EMAIL_PASSKEY
+
+            - name: FRONTEND_URL
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CORS_ORIGIN
+
+            - name: CLOUDINARY_CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_CLOUD_NAME
+
+            - name: CLOUDINARY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_API_KEY
+
+            - name: CLOUDINARY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_API_SECRET
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi

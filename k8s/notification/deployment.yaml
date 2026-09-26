@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: workbee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: rishadkarappa/workbee-notification:latest
+
+          ports:
+            - containerPort: 4004
+              name: http
+
+          env:
+            - name: SERVICE_NAME
+              value: "notification-service"
+
+            - name: NODE_ENV
+              value: "production"
+
+            - name: LOG_LEVEL
+              value: "debug"
+
+            - name: PORT
+              value: "4004"
+
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: NOTIFICATION_MONGO_URI
+
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq"
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: JWT_SECRET
+
+            - name: CORS_ORIGIN
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CORS_ORIGIN
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi

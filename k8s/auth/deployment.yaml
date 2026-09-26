@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: workbee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: rishadkarappa/workbee-auth:latest
+          ports:
+            - containerPort: 4001
+              name: http
+
+          env:
+            - name: SERVICE_NAME
+              value: "auth-service"
+
+            - name: NODE_ENV
+              value: "production"
+
+            - name: LOG_LEVEL
+              value: "debug"
+
+            - name: PORT
+              value: "4001"
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: JWT_SECRET
+
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: JWT_REFRESH_SECRET
+
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: AUTH_MONGO_URI
+
+            - name: EMAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: EMAIL_USER
+
+            - name: EMAIL_PASSKEY
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: EMAIL_PASSKEY
+
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: GOOGLE_CLIENT_ID
+
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: GOOGLE_CLIENT_SECRET
+
+            - name: CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CORS_ORIGIN
+
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq"
+
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_HOST
+
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_PORT
+
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: REDIS_PASSWORD
+
+            - name: CLOUDINARY_CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_CLOUD_NAME
+
+            - name: CLOUDINARY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_API_KEY
+
+            - name: CLOUDINARY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: workbee-secrets
+                  key: CLOUDINARY_API_SECRET
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
