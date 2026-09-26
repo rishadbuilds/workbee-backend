@@ -59,7 +59,6 @@ services.forEach((service) => {
         createProxyMiddleware({
             target: service.target,
             changeOrigin: true,
-            ws: true,
         })
     );
 });
