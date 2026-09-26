@@ -1,0 +1,119 @@
+name: Build and Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout backend repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Docker Buildx
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Build and push Gateway
+      - name: Build and push Gateway
+        uses: docker/build-push-action@v6
+        with:
+          context: ./gateway
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-gateway:${{ github.sha }}
+
+      # 5. Build and push Auth Service
+      - name: Build and push Auth Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/auth-service
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-auth-service:${{ github.sha }}
+
+      # 6. Build and push Work Service
+      - name: Build and push Work Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/work-service
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-work-service:${{ github.sha }}
+
+      # 7. Build and push Communication Service
+      - name: Build and push Communication Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/communication-service
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-communication-service:${{ github.sha }}
+
+      # 8. Build and push Notification Service
+      - name: Build and push Notification Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/notification-service
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-notification-service:${{ github.sha }}
+
+      # 9. Build and push Payment Service
+      - name: Build and push Payment Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/payment-service
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workbee-payment-service:${{ github.sha }}
+
+      # 10. Deploy to AWS k3s
+      - name: Deploy to AWS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            sudo kubectl -n workbee set image deployment/gateway \
+              gateway=${{ secrets.DOCKERHUB_USERNAME }}/workbee-gateway:${{ github.sha }}
+
+            sudo kubectl -n workbee set image deployment/auth-service \
+              auth-service=${{ secrets.DOCKERHUB_USERNAME }}/workbee-auth-service:${{ github.sha }}
+
+            sudo kubectl -n workbee set image deployment/work-service \
+              work-service=${{ secrets.DOCKERHUB_USERNAME }}/workbee-work-service:${{ github.sha }}
+
+            sudo kubectl -n workbee set image deployment/communication-service \
+              communication-service=${{ secrets.DOCKERHUB_USERNAME }}/workbee-communication-service:${{ github.sha }}
+
+            sudo kubectl -n workbee set image deployment/notification-service \
+              notification-service=${{ secrets.DOCKERHUB_USERNAME }}/workbee-notification-service:${{ github.sha }}
+
+            sudo kubectl -n workbee set image deployment/payment-service \
+              payment-service=${{ secrets.DOCKERHUB_USERNAME }}/workbee-payment-service:${{ github.sha }}
+
+            sudo kubectl rollout status deployment/gateway -n workbee
+            sudo kubectl rollout status deployment/auth-service -n workbee
+            sudo kubectl rollout status deployment/work-service -n workbee
+            sudo kubectl rollout status deployment/communication-service -n workbee
+            sudo kubectl rollout status deployment/notification-service -n workbee
+            sudo kubectl rollout status deployment/payment-service -n workbee
