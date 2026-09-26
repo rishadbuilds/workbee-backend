@@ -8,6 +8,12 @@ export const authMiddleware = (
     next: NextFunction
 ) => {
 
+    const isSocketIORequest = req.originalUrl.startsWith('/communication/socket.io')
+
+    if (isSocketIORequest) {
+        return next(); 
+    }
+
     const userId = req.headers["x-user-id"];
     const email = req.headers["x-user-email"];
     const role = req.headers["x-user-role"];
