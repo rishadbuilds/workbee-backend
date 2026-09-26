@@ -11,9 +11,6 @@ import { verifyToken } from "./middleware/AuthMiddleware";
 import { logger } from "./logger/logger";
 import { ENV } from "./config/env";
 
-// gateway port
-const PORT = ENV.PORT;
-
 // create app
 const app = express();
 
@@ -68,4 +65,4 @@ services.forEach((service) => {
 });
 
 // gateway port litsening
-app.listen(PORT, () => logger.info(`API Gateway running on ${PORT}`));
+app.listen(ENV.PORT, () => logger.info(`API Gateway running on ${ENV.PORT}`));

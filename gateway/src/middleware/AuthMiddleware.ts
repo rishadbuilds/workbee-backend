@@ -10,8 +10,8 @@ import { logger } from "../logger/logger";
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
 
   const isSocketIORequest =
-    req.path.startsWith('/communication/socket.io') ||
-    req.path.startsWith('/notification/socket.io');
+    req.originalUrl.startsWith('/communication/socket.io') ||
+    req.originalUrl.startsWith('/notification/socket.io');
 
   if (isPublic(req) || isSocketIORequest) {
     return next();
