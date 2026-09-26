@@ -48,23 +48,23 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       });
     }
 
-    if (dto.progress === "completed" || dto.status === "completed") {
-      this._notifyPaymentService(workId).catch((err) => {
-        logger.error("[UpdateWorkUseCase] Failed to notify payment service:", err.message);
-      });
-    }
+    // if (dto.progress === "completed" || dto.status === "completed") {
+    //   this._notifyPaymentService(workId).catch((err) => {
+    //     logger.error("[UpdateWorkUseCase] Failed to notify payment service:", err.message);
+    //   });
+    // }
 
     return WorkMapper.toResponseDto(updatedWork);
   }
 
-  private async _notifyPaymentService(workId: string): Promise<void> {
-    const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
-    if (!paymentServiceUrl) {
-      logger.warn("[UpdateWorkUseCase] PAYMENT_SERVICE_URL not set — skipping payment notification");
-      return;
-    }
+  // private async _notifyPaymentService(workId: string): Promise<void> {
+  //   const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
+  //   if (!paymentServiceUrl) {
+  //     logger.warn("[UpdateWorkUseCase] PAYMENT_SERVICE_URL not set — skipping payment notification");
+  //     return;
+  //   }
 
-    await axios.post(`${paymentServiceUrl}/payment/work-completed`, { workId }, { timeout: 5000 });
-    logger.info(`UpdateWorkUseCase - Notified payment service for completed work ${workId}`);
-  }
+  //   await axios.post(`${paymentServiceUrl}/payment/work-completed`, { workId }, { timeout: 5000 });
+  //   logger.info(`UpdateWorkUseCase - Notified payment service for completed work ${workId}`);
+  // }
 }
