@@ -8,7 +8,7 @@ export class EmailService implements IEmailService {
     private transporter;
 
     constructor() {
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSKEY) {
             logger.error("email credentials not configured. emails will not be sent.");
             this.transporter = null;
         } else {
@@ -16,7 +16,7 @@ export class EmailService implements IEmailService {
                 service: "gmail",
                 auth: {
                     user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS,
+                    pass: process.env.EMAIL_PASSKEY,
                 },
             });
         }

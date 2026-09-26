@@ -8,7 +8,12 @@ import { ErrorMessages } from "../shared/constants/ErrorMessages";
 import { logger } from "../logger/logger";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-  if (isPublic(req)) {
+
+  const isSocketIORequest =
+    req.path.startsWith('/communication/socket.io') ||
+    req.path.startsWith('/notification/socket.io');
+
+  if (isPublic(req) || isSocketIORequest) {
     return next();
   }
 
@@ -31,11 +36,11 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const redis = getRedisClient();
     const isBlocked = await redis.get(`blocked:${userId}`);
 
-    
+
 
     if (isBlocked) {
       logger.warn(`Blocked ${role} attempted access: ${userId} — ${req.method} ${req.path}`);
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: ErrorMessages.AUTH.ACCOUNT_HAS_BEEN_BLOCKED,
         code: "ACCOUNT_BLOCKED"
       });
@@ -54,7 +59,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const message = error instanceof Error ? error.message : "unknown error";
 
     logger.error(`Token verification failed for ${req.method} ${req.path}: ${message}`);
-    
-    return res.status(403).json({ error: ErrorMessages.AUTH.INVALID_OR_EXPIRED_TOKEN});
+
+    return res.status(403).json({ error: ErrorMessages.AUTH.INVALID_OR_EXPIRED_TOKEN });
   }
 };

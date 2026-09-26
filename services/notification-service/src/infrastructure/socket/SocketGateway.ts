@@ -14,13 +14,7 @@ export class SocketGateway {
   private connectionHandler: ConnectionHandler;
 
   constructor(httpServer: HttpServer) {
-    // this.io = new Server(httpServer, {
-    //   cors: {
-    //     origin: ENV.CORS_ORIGIN,
-    //     credentials: true,
-    //     methods: ['GET', 'POST'],
-    //   },
-    // });
+
     this.io = new Server(httpServer, {
       path: '/notification/socket.io',
       cors: {
