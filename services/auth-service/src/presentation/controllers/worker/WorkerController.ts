@@ -2,15 +2,25 @@ import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
-
-import { WorkerLoginRequestDTO } from "../../../application/dtos/worker/LoginWorkerDTO";
-import { IWorkerLoginUseCase } from "../../../application/ports/worker/IWorkerLoginUseCase";
-
-import { IWorkerController } from "../../ports/IWorkerController";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
-import { IChangeWorkerPasswordUseCase } from "../../../application/ports/worker/IChangeWorkerPasswordUseCase";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+
+//dtos
+import { WorkerLoginRequestDTO } from "../../../application/dtos/worker/LoginWorkerDTO";
+
+//usecases interfaces
+import { IWorkerLoginUseCase } from "../../../application/ports/worker/IWorkerLoginUseCase";
+import { IChangeWorkerPasswordUseCase } from "../../../application/ports/worker/IChangeWorkerPasswordUseCase";
 import { IGetUserProfileStatUseCase } from "../../../application/ports/worker/IGetUserProfileStatUseCase";
+
+//controller interface
+import { IWorkerController } from "../../ports/IWorkerController";
+
+/** 
+ * 
+ * worker controller 
+ * 
+ */
 
 @injectable()
 export class WorkerController implements IWorkerController {

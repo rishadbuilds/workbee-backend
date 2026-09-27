@@ -5,6 +5,8 @@ import { UserDocument, UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 import { FilterQuery } from "mongoose";
 
+/** mongo user repository */
+
 @injectable()
 export class MongoUserRepository extends MongoBaseRepository<User, UserDocument> implements IUserRepository {
     constructor() {

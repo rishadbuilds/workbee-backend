@@ -1,5 +1,7 @@
 import { container } from "tsyringe";
 
+/** repository di registration */
+
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../domain/repositories/IOtpRepository";
 

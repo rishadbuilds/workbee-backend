@@ -7,6 +7,10 @@ interface LogstashTransportOptions extends Transport.TransportStreamOptions {
   port: number;
 }
 
+/**
+ * custom Winston transport for sending logs to Logstash
+ */
+
 export class LogstashTransport extends Transport {
   private readonly host: string;
   private readonly port: number;

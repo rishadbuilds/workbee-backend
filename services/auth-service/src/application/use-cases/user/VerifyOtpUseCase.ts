@@ -21,6 +21,7 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
     async execute(data: VerifyOtpRequestDTO): Promise<VerifyOtpResponseDTO> {
         const { userId, otp } = data;
         const otpRecord = await this._otpRepository.findByUserId(userId);
+
         if (!otpRecord) throw new Error(ErrorMessages.USER.DONT_GET_OTP);
         if (otpRecord.otp !== otp) throw new Error(ErrorMessages.USER.INVALID_OTP);
         if (otpRecord.expiresAt < new Date()) throw new Error(ErrorMessages.USER.OTP_EXPIRED);
@@ -33,11 +34,11 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
         user.isVerified = true;
         await this._userRepository.save(user);
         
-        // Generate both access and refresh tokens
+        // gen both access and refresh tokens
         const accessToken = this._tokenService.generateAccess(user.id!, user.role as UserRole);
         const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as UserRole);
 
-        // Store refresh token in Redis
+        // store refresh token in redis
         await this._tokenService.storeRefreshToken(user.id!, refreshToken);
 
         return UserMapper.toVerifyOtpResponse(user, accessToken, refreshToken);

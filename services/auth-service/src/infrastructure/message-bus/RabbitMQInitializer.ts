@@ -5,6 +5,10 @@ import { logger } from "../logger/logger";
 import { UserDisputeActionConsumer } from "./UserDisputeActionConsumer";
 import { UserProfileRpcConsumer } from "./UserProfileRpcConsumer";
 
+/**
+ * Initializes the rabbitmq connection and starts messaging consumers
+ */
+
 export class RabbitMQInitializer {
   private static isInitialized = false;
 

@@ -1,10 +1,21 @@
 import { container } from "tsyringe";
 
-import { WorkerEventConsumer } from "../message-bus/WorkerEventConsumer";
+/** message bus (rmq) dipendency injection */
+
+// interface
 import { IWorkerValidationClient } from "../../application/ports/message-bus/IWorkerValidationClient";
-import { WorkerValidationClient } from "../message-bus/WorkerLoginValidationClient";
 import { IWorkerChangePasswordClient } from "../../application/ports/message-bus/IWorkerChangePasswordClient";
+
+// consumer
+import { WorkerEventConsumer } from "../message-bus/WorkerEventConsumer";
+
+// clients
+import { WorkerValidationClient } from "../message-bus/WorkerLoginValidationClient";
 import { WorkerChangePasswordClient } from "../message-bus/WorkerChangePasswordClient";
+
+
+
+/** bind messagebus */
 
 container.registerSingleton("WorkerEventConsumer", WorkerEventConsumer);
 

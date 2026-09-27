@@ -1,5 +1,7 @@
 import { UserRole } from "workbee-common";
 
+/** User domain interface */
+
 export interface User {
   id: string;
   name: string;

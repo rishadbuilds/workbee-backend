@@ -3,6 +3,7 @@ import { injectable, inject } from "tsyringe";
 import { IChangeWorkerPasswordUseCase } from "../../ports/worker/IChangeWorkerPasswordUseCase";
 import { ChangeWorkerPasswordRequestDTO } from "../../dtos/worker/ChangeWorkerPasswordDTO";
 import { IWorkerChangePasswordClient } from "../../ports/message-bus/IWorkerChangePasswordClient";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class ChangeWorkerPasswordUseCase implements IChangeWorkerPasswordUseCase {
@@ -21,7 +22,7 @@ export class ChangeWorkerPasswordUseCase implements IChangeWorkerPasswordUseCase
         );
 
         if (!response.success) {
-            throw new Error(response.error || "Failed to change worker password");
+            throw new Error(response.error || ErrorMessages.WORKER.FAILED_TO_CHANGE_PASS);
         }
     }
 }

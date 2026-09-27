@@ -6,6 +6,8 @@ const router = Router();
 
 const workerController = container.resolve(WorkerController);
 
+/** worker routes */
+
 router.post("/worker-login", workerController.workerLogin.bind(workerController));
 router.post("/change-worker-password", workerController.changeWorkerPassword.bind(workerController));
 router.get('/user-profile-stat/:userId', workerController.getUserProfile.bind(workerController));

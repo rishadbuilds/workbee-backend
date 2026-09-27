@@ -1,8 +1,3 @@
-// /**
-//  * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
-//  * so check from auth service is the worker is verified or not
-//  */
-
 import { v4 as uuidv4 } from 'uuid';
 import { WorkerLoginResponseRMQDTO } from '../../application/dtos/worker/WorkerLoginRMQDTO';
 import { logger } from '../logger/logger';
@@ -10,8 +5,13 @@ import { IWorkerValidationClient } from '../../application/ports/message-bus/IWo
 import { injectable } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
 
+/**
+ * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
+ * so check from auth service is the worker is verified or not
+ */
+
 @injectable()
-export class WorkerValidationClient implements IWorkerValidationClient{
+export class WorkerValidationClient implements IWorkerValidationClient {
     private readonly REQUEST_QUEUE = 'worker.validate.request';
     private readonly RESPONSE_QUEUE = 'worker.validate.response';
     private readonly TIMEOUT = 10000; // 10 seconds
@@ -49,36 +49,36 @@ export class WorkerValidationClient implements IWorkerValidationClient{
                 await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
                 // Create a NEW consumer for THIS request only
-                const consumer = await channel.consume(this.RESPONSE_QUEUE,(msg) => {
-                        if (!msg || isResolved) return;
+                const consumer = await channel.consume(this.RESPONSE_QUEUE, (msg) => {
+                    if (!msg || isResolved) return;
 
-                        // Only process matching correlationId
-                        if (msg.properties.correlationId === correlationId) {
-                            isResolved = true;
-                            clearTimeout(timeoutId);
+                    // Only process matching correlationId
+                    if (msg.properties.correlationId === correlationId) {
+                        isResolved = true;
+                        clearTimeout(timeoutId);
 
-                            try {
-                                const response = JSON.parse(msg.content.toString());
+                        try {
+                            const response = JSON.parse(msg.content.toString());
 
-                                logger.info(`Received response for: ${correlationId}`, {
-                                    success: response.success
-                                });
-                                channel.ack(msg);
-                                channel.cancel(consumer.consumerTag).catch(err =>
-                                    logger.error("Error canceling consumer:", err)
-                                );
-                                resolve(response);
-                            } catch (parseError) {
-                                logger.error("Error parsing response:", parseError);
-                                channel.ack(msg);
-                                reject(new Error("Invalid response format"));
-                            }
-                        } else {
-                            // Acknowledge but ignore mismatched messages
-                            logger.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
+                            logger.info(`Received response for: ${correlationId}`, {
+                                success: response.success
+                            });
                             channel.ack(msg);
+                            channel.cancel(consumer.consumerTag).catch(err =>
+                                logger.error("Error canceling consumer:", err)
+                            );
+                            resolve(response);
+                        } catch (parseError) {
+                            logger.error("Error parsing response:", parseError);
+                            channel.ack(msg);
+                            reject(new Error("Invalid response format"));
                         }
-                    },{ noAck: false }
+                    } else {
+                        // Acknowledge but ignore mismatched messages
+                        logger.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
+                        channel.ack(msg);
+                    }
+                }, { noAck: false }
                 );
 
                 consumerTag = consumer.consumerTag;

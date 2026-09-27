@@ -27,8 +27,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     if (!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD);
 
     if (user.isBlocked) {
-      logger.error("user wasw blocked");
-      throw new Error("user wasw blocked")
+      // logger.error("user wasw blocked");
+      throw new Error(ErrorMessages.USER.BLOCKED)
     }
 
     // Generate both tokens
@@ -37,9 +37,10 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     // Store refresh token in Redis
     await this._tokenService.storeRefreshToken(user.id!, refreshToken);
-    logger.info('login usecase hited')
-    logger.info('new apeel')
-    logger.info('lvertheeeeee')
+
+    // logger.info('login usecase hited')
+    // logger.info('new apeel')
+    // logger.info('lvertheeeeee')
 
     return UserMapper.toLoginResponse(user, accessToken, refreshToken);
   }

@@ -17,6 +17,11 @@ interface UserDisputeActionResponse {
   error?: string;
 }
 
+/**
+ * rabbitmq consumer responsible for processing user actions
+ * requested by the work service through inter-service messaging.
+ */
+
 @injectable()
 export class UserDisputeActionConsumer {
   private readonly REQUEST_QUEUE = "user.dispute-action.request";

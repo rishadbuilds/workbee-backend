@@ -1,5 +1,7 @@
 import type { IJwtPayload, UserRole } from "workbee-common";
 
+/** token service interface */
+
 export interface ITokenService {
     generateAccess(id: string, role?: UserRole): string;
     generateRefresh(id: string, role?: UserRole): string;

@@ -14,8 +14,12 @@ export const ErrorMessages = {
             INVALID_USER_ID:"Invalid user id",
             WRON_CURRENT_PASS:"you provided current password was wrong",
             FAILED_TO_UPDATE_PROFILE_IMAGE:"Failed to update profile image",
-            BLOCKED:"User is blocked",
+            BLOCKED:"User was blocked",
             WRONG_USER_ID:"wrong user id",
+    },
+
+    OTP:{
+        OTP_WILL_EXPIRE:"OTP expiry must be in the future"
     },
 
     AUTH:{
@@ -38,7 +42,8 @@ export const ErrorMessages = {
     },
 
     WORKER:{
-        WORKER_VALIDATION_FAILED:"Worker validation failed"
+        WORKER_VALIDATION_FAILED:"Worker validation failed",
+        FAILED_TO_CHANGE_PASS:"Failed to change worker password"
     },
 
     GENERAL:{

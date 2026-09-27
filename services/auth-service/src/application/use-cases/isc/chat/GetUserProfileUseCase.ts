@@ -5,7 +5,7 @@ import { ErrorMessages } from '../../../../shared/constants/ErrorMessages';
 import { UserMapper } from '../../../mappers/UserMapper';
 
 /**
- * comm
+ * inter service communication to get user details to communication service chat
  */
 
 @injectable()

@@ -29,7 +29,6 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
         // hash service : check password
         const hashNewPassword = await this._hashService.hash(dto.newPassword)
 
-
         const result = await this._userRepository.saveNewPassword(dto.userId, hashNewPassword)
 
         return {

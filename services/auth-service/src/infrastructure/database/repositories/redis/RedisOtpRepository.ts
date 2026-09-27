@@ -3,9 +3,11 @@ import { injectable } from "tsyringe";
 import { IOtpRepository } from "../../../../domain/repositories/IOtpRepository";
 import { Otp } from "../../../../domain/entities/Otp";
 import RedisClient from "../../../config/RedisClient";
+import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
 
 
 /**
+ * resi repository
  * storing otp in redis for cache/temporary storage
  */
 
@@ -35,7 +37,7 @@ export class RedisOtpRepository implements IOtpRepository {
     );
 
     if (ttlSeconds <= 0) {
-      throw new Error("OTP expiry must be in the future");
+      throw new Error(ErrorMessages.OTP.OTP_WILL_EXPIRE);
     }
 
     const payload: StoredOtp = {

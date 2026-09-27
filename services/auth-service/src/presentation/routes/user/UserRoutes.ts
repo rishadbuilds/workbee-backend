@@ -6,6 +6,8 @@ const router = Router();
 
 const userController = container.resolve(UserController);
 
+/** user routes */
+
 router.post("/register", userController.register.bind(userController));
 router.post("/verifyOtp", userController.verifyOtp.bind(userController));
 router.post("/resend-otp", userController.resendOtp.bind(userController));

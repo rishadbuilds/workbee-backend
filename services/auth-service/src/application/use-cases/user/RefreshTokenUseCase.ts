@@ -44,12 +44,11 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
 
     }
 
-    // Generate new tokens
+    // gen new access and refresh tokens
     const newAccessToken = this._tokenService.generateAccess(userId, role as UserRole);
-
     const newRefreshToken = this._tokenService.generateRefresh(userId, role as UserRole);
 
-    // Rotate refresh token in Redis
+    // rotate refresh token in redis
     await this._tokenService.storeRefreshToken(userId, newRefreshToken);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken, };

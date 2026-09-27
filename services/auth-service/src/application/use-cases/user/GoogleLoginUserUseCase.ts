@@ -9,8 +9,9 @@ import { UserMapper } from "../../mappers/UserMapper";
 import { IGoogleLoginUserUseCase } from "../../ports/user/IGoogleLoginUserUseCase";
 import { UserRole } from "workbee-common";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { ENV } from "../../../infrastructure/config/env";
 
-const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+const clientId = new OAuth2Client(ENV.GOOGLE_CLIENT_ID)
 
 @injectable()
 export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
@@ -23,7 +24,7 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
         const { credential } = data;
         const ticket = await clientId.verifyIdToken({
             idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID
+            audience: ENV.GOOGLE_CLIENT_ID
         });
 
         const payload = ticket.getPayload();
@@ -42,11 +43,11 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
             user = await this._userRepository.save(newUser);
         }
 
-        // Generate both access and refresh tokens
+        // gen access and refresh tokens
         const accessToken = this._tokenService.generateAccess(user.id!, user.role as UserRole);
         const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as UserRole);
 
-        // Store refresh token in Redis
+        // store refresh token in redis
         await this._tokenService.storeRefreshToken(user.id!, refreshToken);
 
         return UserMapper.toGoogleLoginResponse(user, accessToken, refreshToken);

@@ -8,6 +8,11 @@ interface UserProfileRpcRequestMsg {
   userId: string;
 }
 
+/**
+ * RabbitMQ RPC consumer responsible for fetching user profile data
+ * requested by communication service
+ */
+
 @injectable()
 export class UserProfileRpcConsumer {
   private readonly REQUEST_QUEUE = "user.profile.request";

@@ -6,6 +6,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IForgotPasswordUseCase } from "../../ports/user/IForgotPasswordUseCase";
+import { ENV } from "../../../infrastructure/config/env";
 
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
@@ -20,7 +21,9 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         // console.log('forgot pass usecase get user')
         const resetToken = this._tokenService.generateAccess(user.id!)
-        const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+
+        const resetLink = `${ENV.CLIENT_URL}/reset-password/${resetToken}`
+
         await this._emailService.sendResentPasswordLink(email, resetLink)
 
         return { message: ResponseMessage.USER.SENT_RESET_LINK}

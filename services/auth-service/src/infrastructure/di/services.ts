@@ -1,5 +1,7 @@
 import { container } from "tsyringe";
 
+/** service registrations */
+
 import { HashService } from "../services/HashService";
 import { TokenService } from "../services/TokenService";
 import { EmailService } from "../services/EmailService";

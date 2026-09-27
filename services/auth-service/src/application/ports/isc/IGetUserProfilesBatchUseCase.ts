@@ -6,6 +6,7 @@ export interface IUserProfiles {
     email:string;
     role:UserRole;
 }
+
 export interface IGetUserProfilesBatchUseCase {
     execute(userIds:string[]):Promise<IUserProfiles[]>
 }

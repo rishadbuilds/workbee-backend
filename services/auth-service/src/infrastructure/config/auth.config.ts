@@ -1,3 +1,8 @@
+/** 
+ * toen expiry configuration
+ * - access token
+ * - refresh token
+ */
 
 export const AUTH_CONFIG = {
     ACCESS_TOKEN_EXPIRY:'15m',

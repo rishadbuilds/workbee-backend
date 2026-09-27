@@ -1,5 +1,7 @@
 import { Document,Model } from "mongoose";
 
+/** mongo base repository */
+
 export abstract class MongoBaseRepository<TDomain,TDocument extends Document>{
     protected readonly model:Model<TDocument>;
 

@@ -16,7 +16,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
         @inject("OtpRepository") private readonly _otpRepository: IOtpRepository,
         @inject("OtpService") private readonly _otpService: IOtpService,
         @inject("EmailService") private readonly _emailService: IEmailService
-    ) {}
+    ) { }
 
     async execute(data: ResendOtpRequestDTO): Promise<ResendOtpResponseDTO> {
         const { userId } = data;
@@ -26,7 +26,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
 
         if (user.isVerified) throw new Error(ErrorMessages.USER.ALREADY_VERIFIED);
 
-        // Delete existing OTP
+        // delete existing otp
         await this._otpRepository.deleteByUserId(userId);
 
         // gen new otp
@@ -35,14 +35,10 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
 
         const expiresAt = new Date(Date.now() + 2 * 60 * 1000);
 
-        await this._otpRepository.save({
-            userId,
-            otp,
-            expiresAt
-        });
+        await this._otpRepository.save({ userId, otp, expiresAt });
 
         // send otp
         await this._emailService.sendOtp(user.email, otp);
-        return { success: true, message: ResponseMessage.OTP.OTP_RESENT};
+        return { success: true, message: ResponseMessage.OTP.OTP_RESENT };
     }
 }

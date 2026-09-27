@@ -3,16 +3,23 @@ import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
+//dtos
 import { LoginAdminRequestDTO } from "../../../application/dtos/admin/LoginAdminDTO";
 
+//usecase interfaces
 import { ILoginAdminUseCase } from "../../../application/ports/admin/ILoginAdminUseCase";
 import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseCase";
-
-import { IAdminContoller } from "../../ports/IAdminController";
 import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUseCase";
-import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { IGetAdminUserStatsUseCase } from "../../../application/ports/admin/IGetAdminUserStatsUseCase";
+
+// controller interface
+import { IAdminContoller } from "../../ports/IAdminController";
+
+/** 
+ * admin controller 
+ */
 
 @injectable()
 export class AdminController implements IAdminContoller {
@@ -51,7 +58,7 @@ export class AdminController implements IAdminContoller {
                 limit,
                 totalPages: Math.ceil(result.total / limit)
             }, ResponseMessage.ADMIN.GET_USERS));
-            
+
         } catch (error) {
             next(error)
         }

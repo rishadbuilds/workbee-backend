@@ -13,6 +13,9 @@ export const ENV = {
     JWT_SECRET: getEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
 
+    // client url
+    CLIENT_URL: getEnv("CLIENT_URL"),
+
     //email
     EMAIL_USER: getEnv("EMAIL_USER"),
     EMAIL_PASSKEY: getEnv("EMAIL_PASSKEY"),
@@ -37,6 +40,9 @@ export const ENV = {
     CLOUDINARY_CLOUD_NAME: getEnv("CLOUDINARY_CLOUD_NAME"),
     CLOUDINARY_API_KEY: getEnv("CLOUDINARY_API_KEY"),
     CLOUDINARY_API_SECRET: getEnv("CLOUDINARY_API_SECRET"),
+
+    // google creds
+    GOOGLE_CLIENT_ID: getEnv("GOOGLE_CLIENT_ID"),
 
 
 }

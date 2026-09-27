@@ -23,7 +23,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase{
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         
         const hashed = await this._hashService.hash(password)
-        console.log('hased pas',hashed)
+        // console.log('hased pas',hashed)
         user.password = hashed
 
         await this._userRepository.save(user)
