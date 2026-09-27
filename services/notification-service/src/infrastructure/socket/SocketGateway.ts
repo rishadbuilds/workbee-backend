@@ -16,7 +16,8 @@ export class SocketGateway {
   constructor(httpServer: HttpServer) {
 
     this.io = new Server(httpServer, {
-      path: '/socket.io',
+      // path: '/socket.io',
+      path: process.env.SOCKET_IO_PATH || '/socket.io',
       cors: {
         origin: process.env.CORS_ORIGIN,
         credentials: true,

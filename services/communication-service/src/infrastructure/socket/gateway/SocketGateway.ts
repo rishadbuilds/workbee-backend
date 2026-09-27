@@ -13,6 +13,7 @@ import { BidHandler } from '../handlers/BidHandler';
 import { WorkHandler } from '../handlers/WorkHandler';
 import { PaymentHandler } from '../handlers/PaymentHandler';
 import { TypingHandler } from '../handlers/TypingHandler';
+import { PresenceHandler } from '../handlers/PresenceHandler';
 
 export class SocketGateway {
   private io: Server;
@@ -23,11 +24,13 @@ export class SocketGateway {
   private workHandler: WorkHandler;
   private paymentHandler: PaymentHandler;
   private typingHandler: TypingHandler;
+  private presenceHandler: PresenceHandler; 
 
   constructor(httpServer: HttpServer) {
 
     this.io = new Server(httpServer, {
-      path: '/socket.io',
+      // path: '/socket.io',
+      path: process.env.SOCKET_IO_PATH || '/socket.io',
       cors: {
         origin: process.env.CORS_ORIGIN,
         credentials: true,
@@ -43,6 +46,7 @@ export class SocketGateway {
     this.workHandler = new WorkHandler(this.io);
     this.paymentHandler = new PaymentHandler(this.io);
     this.typingHandler = new TypingHandler();
+    this.presenceHandler = new PresenceHandler(this.io, this.userSockets); 
 
     this.setupMiddleware();
     this.setupEventHandlers();
@@ -82,6 +86,7 @@ export class SocketGateway {
       this.workHandler.register(socket);
       this.paymentHandler.register(socket);
       this.typingHandler.register(socket);
+      this.presenceHandler.register(socket);
 
       socket.on('disconnect', () => {
         logger.info(`[Socket] disconnected: ${socket.userId}`);
