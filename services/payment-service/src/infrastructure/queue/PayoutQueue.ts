@@ -4,18 +4,12 @@ import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/worker/R
 import { ENV } from "../config/env";
 import { logger } from "../logger/logger";
 
-// const REDIS_CONNECTION = {
-//   host: ENV.REDIS_HOST,
-//   port: Number(ENV.REDIS_PORT),
-//   password: ENV.REDIS_PASSWORD,
-//   tls: {}, 
-// };
+
 const REDIS_CONNECTION = {
   host: ENV.REDIS_HOST,
   port: Number(ENV.REDIS_PORT),
   password: ENV.REDIS_PASSWORD,
   ...(ENV.REDIS_TLS === "true" ? { tls: {} } : {}),
-  
 };
 
 const QUEUE_NAME = "worker-payout";

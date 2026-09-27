@@ -6,13 +6,6 @@ let redisClient: Redis | null = null;
 export const getRedisClient = (): Redis => {
   if (!redisClient) {
 
-    // redisClient = new Redis({
-    //   host: process.env.REDIS_HOST,
-    //   port: Number(process.env.REDIS_PORT),
-    //   password: process.env.REDIS_PASSWORD,
-    //   tls: {},
-    // });
-
     redisClient = new Redis({
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT || '6379'),
