@@ -161,7 +161,6 @@ export class EmailService implements IEmailService {
             logger.info("Rejection email sent to:", email);
         } catch (error) {
             logger.error("Failed to send rejection email:", error);
-            //dont throw error bec allow the rejection to succeed even if email fails
         }
     }
 

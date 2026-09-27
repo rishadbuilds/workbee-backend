@@ -1,12 +1,9 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { NotificationRepository } from '../database/repositories/NotificationRepository';
-import { MessageEventConsumer } from '../message-bus/MessageEventConsumer';
+import { INotificationRepository } from '../../domain/repositories/INotificationRepository';
 
 // Register repositories
-container.registerSingleton("NotificationRepository", NotificationRepository);
-
-// Register messaging
-container.registerSingleton(MessageEventConsumer);
+container.registerSingleton<INotificationRepository>("NotificationRepository", NotificationRepository);
 
 export { container };
