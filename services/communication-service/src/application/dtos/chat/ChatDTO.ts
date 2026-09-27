@@ -1,4 +1,5 @@
 import { UserRole } from "workbee-common";
+import { Message } from "../../../domain/entities/Message";
 
 export interface CreateChatDTO {
   userId: string;
@@ -14,6 +15,10 @@ export interface SendMessageDTO {
   // uploads to Cloudinary
   mediaUrl?: string;
   mediaPublicId?: string;
+  recipientId?: string;
+}
+
+export interface SendMessageResultDTO extends Message {
   recipientId?: string;
 }
 

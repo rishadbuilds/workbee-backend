@@ -12,6 +12,8 @@ import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 import { IMarkChatAsReadUseCase } from '../../application/ports/chat/IMarkChatAsReadUseCase';
 import { UserRole } from 'workbee-common';
 
+/** chat controller */
+
 @injectable()
 export class ChatController implements IChatController {
   constructor(

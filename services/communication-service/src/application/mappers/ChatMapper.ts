@@ -4,9 +4,11 @@ import { Message } from "../../domain/entities/Message";
 import { ICacheService } from "../../domain/services/ICacheService";
 
 export class ChatMapper {
+  
   /* 
    * chat mapping
-   * */
+   * 
+   */
 
   static async toChatWithParticipants(chat: Chat, cacheService: ICacheService): Promise<Chat> {
     const userProfile = await cacheService.getUserProfile(

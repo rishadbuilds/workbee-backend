@@ -2,15 +2,10 @@
 import { inject, injectable } from 'tsyringe';
 import { IMessageRepository, NewMessage } from '../../../../domain/repositories/IMessageRepository';
 import { IChatRepository } from '../../../../domain/repositories/IChatRepository';
-import { SendMessageDTO } from '../../../dtos/chat/ChatDTO';
-import { Message } from '../../../../domain/entities/Message';
+import { SendMessageDTO, SendMessageResultDTO } from '../../../dtos/chat/ChatDTO';
 import { ISendMessageUseCase } from '../../../ports/chat/ISendMessageUseCase';
 import { UserRole } from 'workbee-common';
 import { ErrorMessages } from '../../../../shared/constants/ErrorMessages';
-
-export interface SendMessageResult extends Message {
-  recipientId?: string;
-}
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -19,15 +14,14 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     @inject("ChatRepository") private readonly _chatRepository: IChatRepository
   ) { }
 
-  async execute(data: SendMessageDTO): Promise<SendMessageResult> {
-    // Get chat to determine recipient
+  async execute(data: SendMessageDTO): Promise<SendMessageResultDTO> {
     const chat = await this._chatRepository.findById(data.chatId);
 
     if (!chat) {
       throw new Error(ErrorMessages.CHAT.CHAT_NOT_FOUND);
     }
 
-    // Determine recipient based on sender role
+    // determine recipient based on sender role
     let recipientId: string | undefined;
     if (data.senderRole === UserRole.USER) {
       recipientId = chat.participants.workerId;
@@ -35,7 +29,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       recipientId = chat.participants.userId;
     }
 
-    // Create message
     const message: NewMessage = {
       chatId: data.chatId,
       senderId: data.senderId,
@@ -46,7 +39,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     };
 
     const savedMessage = await this._messageRepository.create(message);
-
     await this._chatRepository.updateLastMessage(data.chatId, data.content);
 
     return { ...savedMessage, recipientId };

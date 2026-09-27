@@ -26,6 +26,10 @@ export const ErrorMessages = {
         WRONG_PASSWORD: "provided admin password was wrong"
     },
 
+    COMMON: {
+        USERID_WORKERID_CANNOT_SAME: "User ID and Worker ID cannot be the same",
+    },
+
     GENERAL: {
         SERVER_ERROR: "Something went wrong, Please try again later",
         INTERNAL_SERVER_ERROR: "Someting wrong Internal server error",

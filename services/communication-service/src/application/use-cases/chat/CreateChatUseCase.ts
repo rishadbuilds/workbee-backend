@@ -5,6 +5,7 @@ import { Chat } from '../../../domain/entities/Chat';
 import { ICreateChatUseCase } from '../../ports/chat/ICreateChatUseCase';
 import { ChatMapper } from '../../mappers/ChatMapper';
 import { ICacheService } from '../../../domain/services/ICacheService';
+import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
 
 @injectable()
 export class CreateChatUseCase implements ICreateChatUseCase {
@@ -16,7 +17,7 @@ export class CreateChatUseCase implements ICreateChatUseCase {
   async execute(data: CreateChatDTO): Promise<Chat> {
     
     if (data.userId === data.workerId) {
-      throw new Error("User ID and Worker ID cannot be the same");
+      throw new Error(ErrorMessages.COMMON.USERID_WORKERID_CANNOT_SAME);
     }
 
     const existingChat = await this._chatRepository.findByParticipants(data.userId, data.workerId);

@@ -6,6 +6,11 @@ import { getErrorMessage } from 'workbee-common';
 import { logger } from '../../infrastructure/logger/logger';
 import { ICloudinaryService } from '../../domain/services/ICloudeService';
 
+/** 
+ * upload controller 
+ * cloudinary
+ * */
+
 @injectable()
 export class UploadController {
   constructor(
@@ -29,9 +34,7 @@ export class UploadController {
             resourceType,}, 'Signature generated'));
     } catch (error) {
       logger.error('upload controller upload signature error:', error);
-      return res.status(HttpStatus.BAD_REQUEST).json(
-        ResponseHelper.error(getErrorMessage(error), HttpStatus.BAD_REQUEST)
-      );
+      return res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(getErrorMessage(error), HttpStatus.BAD_REQUEST));
     }
   }
 }
