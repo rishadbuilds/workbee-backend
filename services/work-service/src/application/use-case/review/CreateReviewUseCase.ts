@@ -30,8 +30,8 @@ export class CreateReviewUseCase implements ICreateReviewUseCase {
     const work = await this._workRepository.findById(dto.workId);
     if (!work) throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
 
-    console.log('work userid',work.userId)
-    console.log('dto userid',dto.userId)
+    // console.log('work userid',work.userId)
+    // console.log('dto userid',dto.userId)
 
     if (String(work.userId) !== String(dto.userId)) {
       throw new Error(ErrorMessages.WORK.DONT_HAVE_PERMISSION_TO_UPDATE);

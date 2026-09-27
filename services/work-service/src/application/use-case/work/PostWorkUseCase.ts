@@ -15,7 +15,7 @@ export class PostWorkUseCase implements IPostWorkUseCase {
 
     async execute(dto: PostWorkDto): Promise<WorkResponseDto> {
 
-        // basic validation before setuping frontend validation
+        // validation before setuping frontend validation
         if (!dto.userId) {
             throw new Error(ErrorMessages.AUTH.USER_ID_REQUIRED);
         }

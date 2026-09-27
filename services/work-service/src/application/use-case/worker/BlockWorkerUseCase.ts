@@ -1,15 +1,15 @@
 import { inject, injectable } from "tsyringe";
 import { IBlockWorkerUseCase } from "../../ports/worker/IBlockWorkerUseCase";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
-import { WorkerEventPublisher } from "../../../infrastructure/message-bus/WorkerEventPublisher";
 import { Worker } from "../../../domain/entities/Worker";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IWorkerEventPublisher } from "../../../domain/message-bus/IWorkerEventPublisher";
 
 @injectable()
 export class BlockWorkerUseCase implements IBlockWorkerUseCase {
   constructor(
     @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
-    @inject("WorkerEventPublisher") private readonly _eventPublisher: WorkerEventPublisher
+    @inject("WorkerEventPublisher") private readonly _eventPublisher: IWorkerEventPublisher
   ) {}
 
   async execute(workerId: string): Promise<Worker> {
@@ -19,7 +19,7 @@ export class BlockWorkerUseCase implements IBlockWorkerUseCase {
     worker.isBlocked = !worker.isBlocked;
     const updatedWorker = await this._workerRepository.save(worker);
 
-    // Publish event - auth service will delete the refresh token
+    // publish event - auth service will delete the refresh token
     await this._eventPublisher.publishWorkerBlocked({workerId: worker.id!,isBlocked: updatedWorker.isBlocked! });
 
     return updatedWorker;

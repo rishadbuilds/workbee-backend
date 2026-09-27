@@ -71,15 +71,10 @@ export class GetWorkerDashboardStatsUseCase implements IGetWorkerDashboardStatsU
             worksCompletedLastMonth: monthlyCompletedWorks[monthlyCompletedWorks.length - 2]?.count ?? 0,
 
             activeWorksCount,
-
             worksDueThisWeek,
-
             avgRating,
-
             totalReviews,
-
             monthlyCompletedWorks,
-
             recentCompletedWorks: recentCompleted.map((w) => ({
                 id: w.id!,
                 workTitle: w.workTitle,
