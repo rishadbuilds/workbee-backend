@@ -2,28 +2,11 @@ import { inject, injectable } from "tsyringe";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
 import { IGetAdminPaymentStatsUseCase } from "../../ports/admin/IGetAdminPaymentStatsUseCase";
-import { AdminPaymentStatsResponseDto, MonthlyAmountDto } from "../../dtos/admin/AdminPaymentStatsDTO";
-import { MONTH_LABELS } from "../../../shared/constants/MonthLabels";
+import { AdminPaymentStatsResponseDto } from "../../dtos/admin/AdminPaymentStatsDTO";
+import { buildMonthlySeries } from "../../../shared/utils/buildMonthlySeries";
 
 const MONTHS_BACK = 6;
 const RECENT_LIMIT = 5;
-
-/** builds a complete monthly time series to easly show stats */
-
-function buildMonthlySeries(raw: { month: number; year: number; amount: number }[]): MonthlyAmountDto[] {
-    const now = new Date();
-    const series: MonthlyAmountDto[] = [];
-    for (let i = MONTHS_BACK - 1; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const match = raw.find(m => m.month === d.getMonth() + 1 && m.year === d.getFullYear());
-        series.push({
-            month: MONTH_LABELS[d.getMonth()],
-            year: d.getFullYear(),
-            amount: match ? match.amount : 0
-        });
-    }
-    return series;
-}
 
 @injectable()
 export class GetAdminPaymentStatsUseCase implements IGetAdminPaymentStatsUseCase {
@@ -49,8 +32,8 @@ export class GetAdminPaymentStatsUseCase implements IGetAdminPaymentStatsUseCase
             this._paymentRepo.findAllPaginated(1, RECENT_LIMIT),
         ]);
 
-        const monthlyRevenue = buildMonthlySeries(monthlyRevenueRaw);
-        const monthlyPlatformEarnings = buildMonthlySeries(monthlyPlatformEarningsRaw);
+        const monthlyRevenue = buildMonthlySeries(monthlyRevenueRaw,MONTHS_BACK);
+        const monthlyPlatformEarnings = buildMonthlySeries(monthlyPlatformEarningsRaw,MONTHS_BACK);
 
         return {
             grossRevenue: summary.totalRevenue,
