@@ -37,5 +37,6 @@ export const ENV = {
     REDIS_PASSWORD: getOptionalEnv("REDIS_PASSWORD"),
     REDIS_HOST: getEnv("REDIS_HOST"),
     REDIS_PORT: getEnv("REDIS_PORT"),
+    REDIS_TLS: getEnv("REDIS_TLS"),
 
 }

@@ -48,23 +48,56 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       });
     }
 
-    if (dto.progress === "completed" || dto.status === "completed") {
-      this._notifyPaymentService(workId).catch((err) => {
-        logger.error("[UpdateWorkUseCase] Failed to notify payment service:", err.message);
-      });
-    }
+  //   if (dto.progress === "completed" || dto.status === "completed") {
+  //     this._notifyPaymentService(workId).catch((err) => {
+  //       logger.error("[UpdateWorkUseCase] Failed to notify payment service:", err.message);
+  //     });
+  //   }
 
-    return WorkMapper.toResponseDto(updatedWork);
+  //   return WorkMapper.toResponseDto(updatedWork);
+  // }
+
+  // private async _notifyPaymentService(workId: string): Promise<void> {
+  //   const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
+  //   if (!paymentServiceUrl) {
+  //     logger.warn("[UpdateWorkUseCase] PAYMENT_SERVICE_URL not set — skipping payment notification");
+  //     return;
+  //   }
+
+  //   await axios.post(`${paymentServiceUrl}/payment/work-completed`, { workId }, { timeout: 5000 });
+  //   logger.info(`UpdateWorkUseCase - Notified payment service for completed work ${workId}`);
+  // }
+  if (dto.progress === "completed" || dto.status === "completed") {
+  this._notifyPaymentService(workId, existingWork.workerId!).catch((err) => {
+    logger.error("[UpdateWorkUseCase] Failed to notify payment service:", {
+      status: err.response?.status,
+      data: err.response?.data,
+      message: err.message,
+    });
+  });
+}
+
+return WorkMapper.toResponseDto(updatedWork);
+}
+
+private async _notifyPaymentService(workId: string, workerId: string): Promise<void> {
+  const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
+  if (!paymentServiceUrl) {
+    logger.warn("[UpdateWorkUseCase] PAYMENT_SERVICE_URL not set — skipping payment notification");
+    return;
   }
 
-  private async _notifyPaymentService(workId: string): Promise<void> {
-    const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
-    if (!paymentServiceUrl) {
-      logger.warn("[UpdateWorkUseCase] PAYMENT_SERVICE_URL not set — skipping payment notification");
-      return;
+  await axios.post(
+    `${paymentServiceUrl}/work-completed`,
+    { workId },
+    {
+      timeout: 5000,
+      headers: {
+        "x-user-id": workerId,
+        "x-user-role": "worker",
+      },
     }
-
-    await axios.post(`${paymentServiceUrl}/payment/work-completed`, { workId }, { timeout: 5000 });
-    logger.info(`UpdateWorkUseCase - Notified payment service for completed work ${workId}`);
-  }
+  );
+  logger.info(`UpdateWorkUseCase - Notified payment service for completed work ${workId}`);
+}
 }
