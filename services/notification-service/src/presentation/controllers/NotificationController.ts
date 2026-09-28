@@ -17,6 +17,8 @@ import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 import { ErrorMessage } from "../../shared/constants/ErrorMessages";
 
+/** notification controller */
+
 @injectable()
 export class NotificationController implements INotificationController {
   constructor(
@@ -68,7 +70,7 @@ export class NotificationController implements INotificationController {
 
   async markAllAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      
+
       const user = req.user;
 
       if (!user?.userId) {

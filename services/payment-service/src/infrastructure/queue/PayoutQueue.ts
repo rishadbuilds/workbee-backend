@@ -36,9 +36,18 @@ export const getPayoutQueue = (): Queue => {
 
 export const scheduleWorkerPayout = async (paymentId: string): Promise<void> => {
   const queue = getPayoutQueue();
-  await queue.add("release-payout", { paymentId }, { delay: DELAY_MS });
+  await queue.add(
+    "release-payout",
+    { paymentId },
+    { delay: DELAY_MS, jobId: `payout-${paymentId}` }
+  );
   logger.info(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
 };
+// export const scheduleWorkerPayout = async (paymentId: string): Promise<void> => {
+//   const queue = getPayoutQueue();
+//   await queue.add("release-payout", { paymentId }, { delay: DELAY_MS, jobId: `payout-${paymentId}` });
+//   logger.info(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
+// };
 
 export const startPayoutWorker = (): void => {
   payoutWorker = new Worker(
