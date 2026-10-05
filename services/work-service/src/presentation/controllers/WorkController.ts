@@ -37,6 +37,8 @@ import { IGetAdminWorkStatsUseCase } from "../../application/ports/admin/IGetAdm
 import { IUpdateWorkerProfileUseCase } from "../../application/ports/worker/IUpdateWorkerProfileUseCase";
 import { UpdateWorkerProfileReqDTO } from "../../application/dtos/worker/UpdateWorkerProfileDTO";
 import { IGetLiveWorksUseCase } from "../../application/ports/user/IGetLiveWorksUseCase";
+import { IGetAdminBookingsUseCase } from "../../application/ports/admin/IGetAdminBookingsUseCase";
+import { GetAdminBookingsDto } from "../../application/dtos/admin/GetAdminBookingsDTOs";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -55,6 +57,7 @@ export class WorkController implements IWorkController {
         @inject("GetWorkerProfilesBatchUseCase") private readonly _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
         @inject("GetWorkerAssignedWorksUseCase") private readonly _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
         @inject("GetLiveWorksUseCase") private readonly _getLiveWorksUseCase: IGetLiveWorksUseCase,
+        @inject("GetAdminBookingsUseCase") private readonly _getAdminBookingsUseCase: IGetAdminBookingsUseCase,
 
         @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: IUpdateWorkerProfileImageUseCase,
         @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: IGetWorkerProfileSettingsUseCase,
@@ -427,7 +430,7 @@ export class WorkController implements IWorkController {
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result,ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
+                .json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
         } catch (error) {
             next(error);
         }
@@ -554,6 +557,26 @@ export class WorkController implements IWorkController {
             );
         } catch (error) {
             next(error);
+        }
+    }
+
+    async getAdminBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { page, limit, status, fromDate, toDate } = req.query;
+
+            const result = await this._getAdminBookingsUseCase.execute({
+                page: page ? Number(page) : undefined,
+                limit: limit ? Number(limit) : undefined,
+                status: status ? (String(status) as GetAdminBookingsDto["status"]) : undefined,
+                fromDate: fromDate ? String(fromDate) : undefined,
+                toDate: toDate ? String(toDate) : undefined,
+            });
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(result, ResponseMessage.GENERAL.SUCCESS)
+            );
+        } catch (err) {
+            next(err);
         }
     }
 

@@ -39,5 +39,9 @@ router.get('/worker/dashboard-stats', workController.getWorkerDashboardStats.bin
 
 //admin dash
 router.get('/admin/work-stats', workController.getAdminWorkStats.bind(workController));
+router.get('/admin/bookings', workController.getAdminBookings.bind(workController));
+
+
+
 
 export default router

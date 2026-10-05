@@ -65,6 +65,8 @@ import { ApplyDisputeActionUseCase } from "../../application/use-case/dispute/Ap
 import { UserDisputeActionClient } from "../message-bus/UserDisputeActionClient";
 import { GetLiveWorksUseCase } from "../../application/use-case/user/GetLiveWorksUseCase";
 import { IGetLiveWorksUseCase } from "../../application/ports/user/IGetLiveWorksUseCase";
+import { GetAdminBookingsUseCase } from "../../application/use-case/admin/GetAdminBookingsUseCase";
+import { IGetAdminBookingsUseCase } from "../../application/ports/admin/IGetAdminBookingsUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -77,6 +79,7 @@ container.registerSingleton<IGetLiveWorksUseCase>("GetLiveWorksUseCase", GetLive
 container.registerSingleton<IGetWorkerProfileUseCase>("GetWorkerProfileUseCase", GetWorkerProfileUseCase);
 container.registerSingleton<IGetWorkerProfileBatchUseCase>("GetWorkerProfilesBatchUseCase", GetWorkerProfilesBatchUseCase);
 
+container.registerSingleton<IGetAdminBookingsUseCase>("GetAdminBookingsUseCase", GetAdminBookingsUseCase);
 // register work usecase
 container.registerSingleton<IPostWorkUseCase>("PostWorkUseCase", PostWorkUseCase);
 container.registerSingleton<IGetAllWorksUseCase>("GetAllWorksUseCase", GetAllWorksUseCase);

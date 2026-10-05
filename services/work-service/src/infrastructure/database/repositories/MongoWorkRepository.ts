@@ -3,7 +3,7 @@ import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { Work } from "../../../domain/entities/Work";
 import { WorkModel, WorkTocument } from "../models/WorkSchema";
 import { FilterQuery, PipelineStage } from "mongoose";
-import { LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/types/IWorkRepository";
+import { AdminBookingsQueryOptions, LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/types/IWorkRepository";
 
 // Shape returned by the $geoNear aggregation — adds calculatedDistance on top of the document
 type WorkGeoResult = WorkTocument & { calculatedDistance: number };
@@ -378,6 +378,41 @@ export class MongoWorkRepository implements IWorkRepository {
 
     async countAllCompleted(): Promise<number> {
         return WorkModel.countDocuments({ status: 'completed' });
+    }
+
+    async findAllForAdmin(
+        options: AdminBookingsQueryOptions
+    ): Promise<{ works: Work[]; total: number }> {
+        const { page, limit, status, fromDate, toDate } = options;
+        const skip = (page - 1) * limit;
+
+        const query: FilterQuery<WorkTocument> = {};
+
+        if (status) query.status = status;
+
+        if (fromDate || toDate) {
+            query.$or = [
+                {
+                    workType: 'oneDay',
+                    date: {
+                        ...(fromDate ? { $gte: fromDate } : {}),
+                        ...(toDate ? { $lte: toDate } : {}),
+                    },
+                },
+                {
+                    workType: 'multipleDay',
+                    ...(toDate ? { startDate: { $lte: toDate } } : {}),
+                    ...(fromDate ? { endDate: { $gte: fromDate } } : {}),
+                },
+            ];
+        }
+
+        const [works, total] = await Promise.all([
+            WorkModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            WorkModel.countDocuments(query),
+        ]);
+
+        return { works: works.map((w) => this.mapToEntity(w)), total };
     }
 
     private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {

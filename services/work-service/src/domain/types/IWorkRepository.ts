@@ -44,3 +44,11 @@ export interface LiveWorkBucketCounts {
     active: number;
     completed: number;
 }
+
+export interface AdminBookingsQueryOptions {
+  page: number;
+  limit: number;
+  status?: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
+  fromDate?: string; // YYYY-MM-DD
+  toDate?: string;   // YYYY-MM-DD
+}

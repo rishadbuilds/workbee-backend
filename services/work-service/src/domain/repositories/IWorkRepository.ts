@@ -1,5 +1,5 @@
 import { Work } from "../entities/Work";
-import { LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../types/IWorkRepository";
+import { AdminBookingsQueryOptions, LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../types/IWorkRepository";
 
 export interface IWorkRepository {
     create(work: Work): Promise<Work>;
@@ -38,4 +38,6 @@ export interface IWorkRepository {
     // admin dash
     countAllActive(): Promise<number>;
     countAllCompleted(): Promise<number>;
+
+    findAllForAdmin(options: AdminBookingsQueryOptions): Promise<{ works: Work[]; total: number }>;
 }
