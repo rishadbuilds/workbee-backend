@@ -21,7 +21,13 @@ export const ErrorMessages = {
 
     ADMIN: {
         ADMIN_NOT_FOUND: "Admin not found proviced email is wrong",
-        WRONG_PASSWORD: "provided admin password was wrong"
+        WRONG_PASSWORD: "provided admin password was wrong",
+        BOOKINGS:{
+            CANNOT_AFTER_DATE:"fromDate cannot be after toDate",
+            INVALID_TO_DATE:"Invalid toDate",
+            INVALID_FROM_DATE:"Invalid fromDate",
+            INVALID_STATUS:"Invalid status filter",
+        }
     },
 
     GENERAL: {

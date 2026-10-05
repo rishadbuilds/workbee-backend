@@ -1,4 +1,4 @@
-
+/** all month lebels */
 export const MONTH_LABELS = [
     "Jan",
     "Feb",
@@ -13,3 +13,8 @@ export const MONTH_LABELS = [
     "Nov",
     "Dec",
 ];
+
+/** work status */
+export const VALID_WORK_STATUS = ['pending', 'assigned', 'in-progress', 'completed', 'cancelled'];
+
+/** pagination */

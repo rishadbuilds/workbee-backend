@@ -6,11 +6,12 @@ import {
   GetAdminBookingsResponseDto,
 } from "../../dtos/admin/GetAdminBookingsDTOs";
 import { WorkMapper } from "../../mappers/WorkMapper";
+import { VALID_WORK_STATUS } from "../../../shared/constants/Common";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const VALID_STATUS = ['pending', 'assigned', 'in-progress', 'completed', 'cancelled'];
 
 @injectable()
 export class GetAdminBookingsUseCase implements IGetAdminBookingsUseCase {
@@ -22,12 +23,11 @@ export class GetAdminBookingsUseCase implements IGetAdminBookingsUseCase {
     const page = dto.page && dto.page > 0 ? dto.page : 1;
     const limit = dto.limit && dto.limit > 0 ? Math.min(dto.limit, MAX_LIMIT) : DEFAULT_LIMIT;
 
-    // swap Error for your AppError / validation error class
-    if (dto.status && !VALID_STATUS.includes(dto.status)) throw new Error("Invalid status filter");
-    if (dto.fromDate && !DATE_RE.test(dto.fromDate)) throw new Error("Invalid fromDate");
-    if (dto.toDate && !DATE_RE.test(dto.toDate)) throw new Error("Invalid toDate");
+    if (dto.status && !VALID_WORK_STATUS.includes(dto.status)) throw new Error(ErrorMessages.ADMIN.BOOKINGS.INVALID_STATUS);
+    if (dto.fromDate && !DATE_RE.test(dto.fromDate)) throw new Error(ErrorMessages.ADMIN.BOOKINGS.INVALID_FROM_DATE);
+    if (dto.toDate && !DATE_RE.test(dto.toDate)) throw new Error(ErrorMessages.ADMIN.BOOKINGS.INVALID_TO_DATE);
     if (dto.fromDate && dto.toDate && dto.fromDate > dto.toDate) {
-      throw new Error("fromDate cannot be after toDate");
+      throw new Error(ErrorMessages.ADMIN.BOOKINGS.CANNOT_AFTER_DATE);
     }
 
     const { works, total } = await this._workRepository.findAllForAdmin({
