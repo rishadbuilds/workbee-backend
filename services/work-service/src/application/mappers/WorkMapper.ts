@@ -1,4 +1,5 @@
 import { Work } from "../../domain/entities/Work";
+import { AdminBookingItemDto } from "../dtos/admin/GetAdminBookingsDTOs";
 import { PostWorkDto } from "../dtos/work/WorkDTO";
 import { WorkResponseDto } from "../dtos/work/WorkDTO";
 
@@ -73,5 +74,41 @@ export class WorkMapper {
 
     static toResponseDtoList(entities: Work[]): WorkResponseDto[] {
         return entities.map(entity => this.toResponseDto(entity));
+    }
+
+    /** admin side get all bookings */
+    static toAdminBookingDto(entity: Work): AdminBookingItemDto {
+        return {
+            id: entity.id!,
+            userId: entity.userId,
+            workerId: entity.workerId ?? undefined,
+            workTitle: entity.workTitle,
+            workCategory: entity.workCategory,
+            workType: entity.workType,
+            date: entity.date,
+            startDate: entity.startDate,
+            endDate: entity.endDate,
+            time: entity.time,
+            duration: entity.duration,
+            budget: entity.budget,
+            description: entity.description,
+            contactNumber: entity.contactNumber,
+            manualAddress: entity.manualAddress,
+            landmark: entity.landmark,
+            currentLocation: entity.currentLocation,
+            petrolAllowance: entity.petrolAllowance,
+            extraRequirements: entity.extraRequirements,
+            anythingElse: entity.anythingElse,
+            images: entity.images ?? [],
+            videos: entity.videos ?? [],
+            voiceFile: entity.voiceFile ?? null,
+            status: entity.status,
+            progress: entity.progress ?? null,
+            createdAt: entity.createdAt!,
+            updatedAt: entity.updatedAt,
+        };
+    }
+    static toAdminBookingDtoList(entities: Work[]): AdminBookingItemDto[] {
+        return entities.map(entity => this.toAdminBookingDto(entity));
     }
 }

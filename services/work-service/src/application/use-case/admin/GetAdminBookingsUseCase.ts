@@ -2,10 +2,10 @@ import { inject, injectable } from "tsyringe";
 import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { IGetAdminBookingsUseCase } from "../../ports/admin/IGetAdminBookingsUseCase";
 import {
-  AdminBookingItemDto,
   GetAdminBookingsDto,
   GetAdminBookingsResponseDto,
 } from "../../dtos/admin/GetAdminBookingsDTOs";
+import { WorkMapper } from "../../mappers/WorkMapper";
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -38,38 +38,8 @@ export class GetAdminBookingsUseCase implements IGetAdminBookingsUseCase {
       toDate: dto.toDate,
     });
 
-    const items: AdminBookingItemDto[] = works.map((w) => ({
-      id: w.id!,
-      userId: w.userId,
-      workerId: w.workerId ?? undefined,
-      workTitle: w.workTitle,
-      workCategory: w.workCategory,
-      workType: w.workType,
-      date: w.date,
-      startDate: w.startDate,
-      endDate: w.endDate,
-      time: w.time,
-      duration: w.duration,
-      budget: w.budget,
-      description: w.description,
-      contactNumber: w.contactNumber,
-      manualAddress: w.manualAddress,
-      landmark: w.landmark,
-      currentLocation: w.currentLocation,
-      petrolAllowance: w.petrolAllowance,
-      extraRequirements: w.extraRequirements,
-      anythingElse: w.anythingElse,
-      images: w.images ?? [],
-      videos: w.videos ?? [],
-      voiceFile: w.voiceFile ?? null,
-      status: w.status,
-      progress: w.progress ?? null,
-      createdAt: w.createdAt!,
-      updatedAt: w.updatedAt,
-    }));
-
     return {
-      works: items,
+      works: WorkMapper.toAdminBookingDtoList(works),
       pagination: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) },
     };
   }
