@@ -37,6 +37,7 @@ export class GetWorkerAssignedWorksUseCase implements IGetWorkerAssignedWorksUse
       status: work.status,
       progress: work.progress,
       budget: work.budget ? Number(work.budget) : undefined,
+      date:work.date,
       startDate: work.startDate,
       endDate: work.endDate,
       description: work.description,
