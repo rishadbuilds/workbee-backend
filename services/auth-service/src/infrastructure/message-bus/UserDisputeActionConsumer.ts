@@ -3,19 +3,7 @@ import { RabbitMQConnection } from "../config/rabbitmq";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IEmailService } from "../../domain/services/IEmailService";
 import { logger } from "../logger/logger";
-
-interface UserDisputeActionRequest {
-  correlationId: string;
-  userId: string;
-  actionType: "block" | "unblock" | "blacklist" | "unblacklist" | "warning_email";
-  reason: string;
-}
-
-interface UserDisputeActionResponse {
-  success: boolean;
-  message?: string;
-  error?: string;
-}
+import { UserDisputeActionRequest, UserDisputeActionResponse } from "./types/types";
 
 /**
  * rabbitmq consumer responsible for processing user actions
