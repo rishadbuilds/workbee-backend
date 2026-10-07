@@ -2,11 +2,7 @@ import { injectable, inject } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { logger } from "../logger/logger";
-
-interface UserProfileRpcRequestMsg {
-  correlationId: string;
-  userId: string;
-}
+import { UserProfileRpcRequestMsg } from "./types/types";
 
 /**
  * RabbitMQ RPC consumer responsible for fetching user profile data

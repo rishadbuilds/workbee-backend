@@ -12,3 +12,8 @@ export interface UserDisputeActionResponse {
   error?: string;
 }
 
+/** user profile consumer */
+export interface UserProfileRpcRequestMsg {
+  correlationId: string;
+  userId: string;
+}
