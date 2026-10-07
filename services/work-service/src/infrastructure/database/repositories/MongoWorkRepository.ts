@@ -8,8 +8,34 @@ import { AdminBookingsQueryOptions, LiveWorkBucketCounts, LiveWorksQueryOptions,
 // Shape returned by the $geoNear aggregation — adds calculatedDistance on top of the document
 type WorkGeoResult = WorkTocument & { calculatedDistance: number };
 
+// escape user input before using it inside a regex
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 @injectable()
 export class MongoWorkRepository implements IWorkRepository {
+
+    private buildSearchConditions(search: string): FilterQuery<WorkTocument>[] {
+        const term = search.trim();
+
+        return [
+            { workTitle: { $regex: term, $options: 'i' } },
+            { workCategory: { $regex: term, $options: 'i' } },
+            { description: { $regex: term, $options: 'i' } },
+            { manualAddress: { $regex: term, $options: 'i' } },
+            { landmark: { $regex: term, $options: 'i' } },
+            // work id: full id or any part of it (e.g. the 6 chars shown in the table)
+            {
+                $expr: {
+                    $regexMatch: {
+                        input: { $toString: "$_id" },
+                        regex: escapeRegex(term),
+                        options: "i",
+                    },
+                },
+            },
+        ];
+    }
+
     async create(work: Work): Promise<Work> {
         const createdWork = await WorkModel.create(work);
         return this.mapToEntity(createdWork);
@@ -25,121 +51,220 @@ export class MongoWorkRepository implements IWorkRepository {
         return works.map(w => this.mapToEntity(w));
     }
 
+    // async findAll(filters?: {
+    //     search?: string;
+    //     status?: string;
+    //     page?: number;
+    //     limit?: number;
+    //     latitude?: number;
+    //     longitude?: number;
+    //     maxDistance?: number;
+    // }): Promise<{ works: Work[]; total: number }> {
+    //     const {
+    //         search = '',
+    //         status = 'all',
+    //         page = 1,
+    //         limit = 10,
+    //         latitude,
+    //         longitude,
+    //         maxDistance
+    //     } = filters || {};
+
+    //     const skip = (page - 1) * limit;
+
+    //     const hasGeoFilter = latitude !== undefined &&
+    //         longitude !== undefined &&
+    //         maxDistance !== undefined;
+
+    //     if (hasGeoFilter) {
+    //         const matchQuery: FilterQuery<WorkTocument> = {};
+
+    //         if (search && search.trim()) {
+    //             matchQuery.$or = [
+    //                 { workTitle: { $regex: search, $options: 'i' } },
+    //                 { workCategory: { $regex: search, $options: 'i' } },
+    //                 { description: { $regex: search, $options: 'i' } },
+    //                 { manualAddress: { $regex: search, $options: 'i' } },
+    //                 { landmark: { $regex: search, $options: 'i' } }
+    //             ];
+    //         }
+
+    //         if (status !== 'all') {
+    //             matchQuery.status = status as WorkTocument['status'];
+    //         }
+
+    //         const pipeline: PipelineStage[] = [
+    //             {
+    //                 $geoNear: {
+    //                     near: {
+    //                         type: "Point",
+    //                         coordinates: [longitude, latitude]
+    //                     },
+    //                     distanceField: "calculatedDistance",
+    //                     maxDistance: maxDistance * 1000, // Convert km to meters
+    //                     spherical: true,
+    //                     query: matchQuery
+    //                 }
+    //             },
+    //             { $skip: skip },
+    //             { $limit: limit }
+    //         ];
+
+    //         const works = await WorkModel.aggregate<WorkGeoResult>(pipeline);
+
+    //         const countPipeline: PipelineStage[] = [
+    //             {
+    //                 $geoNear: {
+    //                     near: {
+    //                         type: "Point",
+    //                         coordinates: [longitude, latitude]
+    //                     },
+    //                     distanceField: "calculatedDistance",
+    //                     maxDistance: maxDistance * 1000,
+    //                     spherical: true,
+    //                     query: matchQuery
+    //                 }
+    //             },
+    //             { $count: "total" }
+    //         ];
+
+    //         const countResult = await WorkModel.aggregate<{ total: number }>(countPipeline);
+    //         const total = countResult.length > 0 ? countResult[0].total : 0;
+
+    //         return {
+    //             works: works.map(w => this.mapToEntity(w)),
+    //             total
+    //         };
+    //     }
+
+    //     const query: FilterQuery<WorkTocument> = {};
+
+    //     if (search && search.trim()) {
+    //         query.$or = [
+    //             { workTitle: { $regex: search, $options: 'i' } },
+    //             { workCategory: { $regex: search, $options: 'i' } },
+    //             { description: { $regex: search, $options: 'i' } },
+    //             { manualAddress: { $regex: search, $options: 'i' } },
+    //             { landmark: { $regex: search, $options: 'i' } }
+    //         ];
+    //     }
+
+    //     if (status !== 'all') {
+    //         query.status = status as WorkTocument['status'];
+    //     }
+
+    //     const [works, total] = await Promise.all([
+    //         WorkModel.find(query)
+    //             .sort({ createdAt: -1 })
+    //             .skip(skip)
+    //             .limit(limit),
+    //         WorkModel.countDocuments(query)
+    //     ]);
+
+    //     return {
+    //         works: works.map(w => this.mapToEntity(w)),
+    //         total
+    //     };
+    // }
     async findAll(filters?: {
-        search?: string;
-        status?: string;
-        page?: number;
-        limit?: number;
-        latitude?: number;
-        longitude?: number;
-        maxDistance?: number;
-    }): Promise<{ works: Work[]; total: number }> {
-        const {
-            search = '',
-            status = 'all',
-            page = 1,
-            limit = 10,
-            latitude,
-            longitude,
-            maxDistance
-        } = filters || {};
+    search?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+    latitude?: number;
+    longitude?: number;
+    maxDistance?: number;
+}): Promise<{ works: Work[]; total: number }> {
+    const {
+        search = '',
+        status = 'all',
+        page = 1,
+        limit = 10,
+        latitude,
+        longitude,
+        maxDistance
+    } = filters || {};
 
-        const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit;
+    const hasSearch = !!search && !!search.trim();
 
-        const hasGeoFilter = latitude !== undefined &&
-            longitude !== undefined &&
-            maxDistance !== undefined;
+    const hasGeoFilter = latitude !== undefined &&
+        longitude !== undefined &&
+        maxDistance !== undefined;
 
-        if (hasGeoFilter) {
-            const matchQuery: FilterQuery<WorkTocument> = {};
-
-            if (search && search.trim()) {
-                matchQuery.$or = [
-                    { workTitle: { $regex: search, $options: 'i' } },
-                    { workCategory: { $regex: search, $options: 'i' } },
-                    { description: { $regex: search, $options: 'i' } },
-                    { manualAddress: { $regex: search, $options: 'i' } },
-                    { landmark: { $regex: search, $options: 'i' } }
-                ];
-            }
-
-            if (status !== 'all') {
-                matchQuery.status = status as WorkTocument['status'];
-            }
-
-            const pipeline: PipelineStage[] = [
-                {
-                    $geoNear: {
-                        near: {
-                            type: "Point",
-                            coordinates: [longitude, latitude]
-                        },
-                        distanceField: "calculatedDistance",
-                        maxDistance: maxDistance * 1000, // Convert km to meters
-                        spherical: true,
-                        query: matchQuery
-                    }
-                },
-                { $skip: skip },
-                { $limit: limit }
-            ];
-
-            const works = await WorkModel.aggregate<WorkGeoResult>(pipeline);
-
-            const countPipeline: PipelineStage[] = [
-                {
-                    $geoNear: {
-                        near: {
-                            type: "Point",
-                            coordinates: [longitude, latitude]
-                        },
-                        distanceField: "calculatedDistance",
-                        maxDistance: maxDistance * 1000,
-                        spherical: true,
-                        query: matchQuery
-                    }
-                },
-                { $count: "total" }
-            ];
-
-            const countResult = await WorkModel.aggregate<{ total: number }>(countPipeline);
-            const total = countResult.length > 0 ? countResult[0].total : 0;
-
-            return {
-                works: works.map(w => this.mapToEntity(w)),
-                total
-            };
-        }
-
-        const query: FilterQuery<WorkTocument> = {};
-
-        if (search && search.trim()) {
-            query.$or = [
-                { workTitle: { $regex: search, $options: 'i' } },
-                { workCategory: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } },
-                { manualAddress: { $regex: search, $options: 'i' } },
-                { landmark: { $regex: search, $options: 'i' } }
-            ];
-        }
+    if (hasGeoFilter) {
+        // only the status goes into $geoNear's query; search is applied in a
+        // $match stage right after it (so the $expr id match is safe here)
+        const geoQuery: FilterQuery<WorkTocument> = {};
 
         if (status !== 'all') {
-            query.status = status as WorkTocument['status'];
+            geoQuery.status = status as WorkTocument['status'];
         }
 
-        const [works, total] = await Promise.all([
-            WorkModel.find(query)
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit),
-            WorkModel.countDocuments(query)
-        ]);
+        const geoNearStage: PipelineStage = {
+            $geoNear: {
+                near: {
+                    type: "Point",
+                    coordinates: [longitude, latitude]
+                },
+                distanceField: "calculatedDistance",
+                maxDistance: maxDistance * 1000, // Convert km to meters
+                spherical: true,
+                query: geoQuery
+            }
+        };
+
+        const searchStages: PipelineStage[] = hasSearch
+            ? [{ $match: { $or: this.buildSearchConditions(search) } }]
+            : [];
+
+        const pipeline: PipelineStage[] = [
+            geoNearStage,
+            ...searchStages,
+            { $skip: skip },
+            { $limit: limit }
+        ];
+
+        const works = await WorkModel.aggregate<WorkGeoResult>(pipeline);
+
+        const countPipeline: PipelineStage[] = [
+            geoNearStage,
+            ...searchStages,
+            { $count: "total" }
+        ];
+
+        const countResult = await WorkModel.aggregate<{ total: number }>(countPipeline);
+        const total = countResult.length > 0 ? countResult[0].total : 0;
 
         return {
             works: works.map(w => this.mapToEntity(w)),
             total
         };
     }
+
+    const query: FilterQuery<WorkTocument> = {};
+
+    if (hasSearch) {
+        query.$or = this.buildSearchConditions(search);
+    }
+
+    if (status !== 'all') {
+        query.status = status as WorkTocument['status'];
+    }
+
+    const [works, total] = await Promise.all([
+        WorkModel.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        WorkModel.countDocuments(query)
+    ]);
+
+    return {
+        works: works.map(w => this.mapToEntity(w)),
+        total
+    };
+}
 
     async update(id: string, workData: Partial<Work>): Promise<Work | null> {
         const updated = await WorkModel.findByIdAndUpdate(
