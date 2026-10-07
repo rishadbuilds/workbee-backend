@@ -6,6 +6,9 @@ import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchem
 import mongoose, { FilterQuery } from "mongoose";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
+// escape user input before using it inside a regex
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 @injectable()
 export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
   constructor() {
@@ -40,6 +43,31 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       createdAt: worker.createdAt,
       updatedAt: worker.updatedAt
     }
+  }
+
+  // search conditions shared by getNewAppliers / getAllWorkers
+  private buildSearchConditions(search: string): FilterQuery<WorkerDocument>[] {
+    const term = search.trim();
+
+    return [
+      { name: { $regex: term, $options: 'i' } },
+      { email: { $regex: term, $options: 'i' } },
+      { phone: { $regex: term, $options: 'i' } },
+      { "address.city": { $regex: term, $options: 'i' } },
+      { "address.panchayath": { $regex: term, $options: 'i' } },
+      { "address.pincode": { $regex: term, $options: 'i' } },
+      { "address.state": { $regex: term, $options: 'i' } },
+      // worker id: full id or any part of it (e.g. the 6 chars shown in the table)
+      {
+        $expr: {
+          $regexMatch: {
+            input: { $toString: "$_id" },
+            regex: escapeRegex(term),
+            options: "i",
+          },
+        },
+      },
+    ];
   }
 
   async save(worker: Worker): Promise<Worker> {
@@ -96,16 +124,8 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
         ? { status: { $in: ["pending", "approved", "rejected"] } }
         : { status };
 
-    if (search) {
-      searchQuery.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
-        { "address.city": { $regex: search, $options: 'i' } },
-        { "address.panchayath": { $regex: search, $options: 'i' } },
-        { "address.pincode": { $regex: search, $options: 'i' } },
-        { "address.state": { $regex: search, $options: 'i' } },
-      ];
+    if (search && search.trim()) {
+      searchQuery.$or = this.buildSearchConditions(search);
     }
 
     const [workers, total] = await Promise.all([
@@ -133,16 +153,8 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
 
     const searchQuery: FilterQuery<WorkerDocument> = { status: WorkerStatus.APPROVED };
 
-    if (search) {
-      searchQuery.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
-        { "address.city": { $regex: search, $options: 'i' } },
-        { "address.panchayath": { $regex: search, $options: 'i' } },
-        { "address.pincode": { $regex: search, $options: 'i' } },
-        { "address.state": { $regex: search, $options: 'i' } },
-      ];
+    if (search && search.trim()) {
+      searchQuery.$or = this.buildSearchConditions(search);
     }
 
     if (status !== "all") {
