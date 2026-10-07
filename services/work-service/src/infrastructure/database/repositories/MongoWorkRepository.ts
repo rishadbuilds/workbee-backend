@@ -415,6 +415,17 @@ export class MongoWorkRepository implements IWorkRepository {
         return { works: works.map((w) => this.mapToEntity(w)), total };
     }
 
+    async findRecentAssigned(limit: number): Promise<Work[]> {
+        const works = await WorkModel.find({
+            workerId: { $ne: null },
+            status: { $in: ['assigned', 'in-progress', 'completed'] },
+        })
+            .sort({ updatedAt: -1 })
+            .limit(limit);
+
+        return works.map((w) => this.mapToEntity(w));
+    }
+
     private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {
         return {
             id: doc._id.toString(),
