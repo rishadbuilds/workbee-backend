@@ -8,6 +8,11 @@ import { logger } from "../logger/logger";
 import { IWorkerChangePasswordConsumer } from "../../domain/message-bus/IIWorkerChangePasswordConsumer";
 import { ChangePasswordRequest, ChangePasswordResponse } from "./types/types";
 
+/**
+ * change pass consumer
+ * - auth service <-> work service
+ * to ulter auth infras and db
+ */
 
 
 @injectable()

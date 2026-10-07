@@ -43,3 +43,19 @@ export interface WorkerLoginResponse {
     };
     error?: string;
 }
+
+
+/** worker password reset consumer */
+ export interface LookupRequest { email: string; correlationId: string }
+ export interface ResetRequest { workerId: string; newPassword: string; correlationId: string }
+
+ export interface LookupResponse {
+    success: boolean;
+    data?: { id: string; name: string; email: string };
+    error?: string;
+}
+ export interface ResetResponse {
+    success: boolean;
+    message?: string;
+    error?: string;
+}

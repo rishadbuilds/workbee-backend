@@ -1,12 +1,3 @@
-/**
- * auth-service <-> work-service (worker forgot / reset password)
- *
- * worker.forgot-password.request : { email }                  -> { success, data?: { id, name, email }, error? }
- * worker.reset-password.request  : { workerId, newPassword }  -> { success, message?, error? }
- *
- * replies go to the private queue given in msg.properties.replyTo
- */
-
 import { Channel, ConsumeMessage } from "amqplib";
 import { injectable, inject } from "tsyringe";
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
@@ -14,20 +5,13 @@ import { IHashService } from "../../domain/services/IHashService";
 import { WorkerStatus } from "../database/models/WorkerSchema";
 import { getErrorMessage } from "workbee-common";
 import { logger } from "../logger/logger";
+import { LookupRequest, LookupResponse, ResetRequest, ResetResponse } from "./types/types";
 
-interface LookupRequest { email: string; correlationId: string }
-interface ResetRequest { workerId: string; newPassword: string; correlationId: string }
+/**
+ * worker pass reset consumer
+ * auth-service <-> work-service (worker forgot / reset password)
+ */
 
-interface LookupResponse {
-    success: boolean;
-    data?: { id: string; name: string; email: string };
-    error?: string;
-}
-interface ResetResponse {
-    success: boolean;
-    message?: string;
-    error?: string;
-}
 
 @injectable()
 export class WorkerPasswordResetConsumer {

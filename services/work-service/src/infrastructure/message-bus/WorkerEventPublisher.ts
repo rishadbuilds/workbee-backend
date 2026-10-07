@@ -1,14 +1,13 @@
-/**
- * inter serivce comm with [work-auth] : to delete refresh token after blocking worker
- * bublishing to inform auth service worker has been blocked
- */
-
 import { injectable } from "tsyringe";
 import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 import { IWorkerEventPublisher } from "../../domain/message-bus/IWorkerEventPublisher";
 import { IWorkerBlockedEvent } from "./types/types";
 
+/**
+ * inter serivce comm with [work-auth] : to delete refresh token after blocking worker
+ * bublishing to inform auth service worker has been blocked
+ */
 
 @injectable()
 export class WorkerEventPublisher implements IWorkerEventPublisher{
