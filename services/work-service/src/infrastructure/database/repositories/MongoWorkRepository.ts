@@ -4,12 +4,10 @@ import { Work } from "../../../domain/entities/Work";
 import { WorkModel, WorkTocument } from "../models/WorkSchema";
 import { FilterQuery, PipelineStage } from "mongoose";
 import { AdminBookingsQueryOptions, LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/types/IWorkRepository";
+import { escapeRegex } from "../../../shared/constants/Regex";
 
 // Shape returned by the $geoNear aggregation — adds calculatedDistance on top of the document
 type WorkGeoResult = WorkTocument & { calculatedDistance: number };
-
-// escape user input before using it inside a regex
-const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 @injectable()
 export class MongoWorkRepository implements IWorkRepository {

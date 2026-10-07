@@ -5,9 +5,7 @@ import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepositor
 import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchema";
 import mongoose, { FilterQuery } from "mongoose";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
-
-// escape user input before using it inside a regex
-const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+import { escapeRegex } from "../../../shared/constants/Regex";
 
 @injectable()
 export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
