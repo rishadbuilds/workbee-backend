@@ -43,7 +43,8 @@ export const ErrorMessages = {
 
     WORKER:{
         WORKER_VALIDATION_FAILED:"Worker validation failed",
-        FAILED_TO_CHANGE_PASS:"Failed to change worker password"
+        FAILED_TO_CHANGE_PASS:"Failed to change worker password",
+        INVALID_LINK:"Invalid or expired reset link",
     },
 
     GENERAL:{

@@ -87,9 +87,8 @@ export class WorkerController implements IWorkerController {
             const { email } = req.body;
             await this._workerForgotPasswordUseCase.execute({ email });
 
-            // same response whether or not the email exists
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(null, "If an approved worker account exists for this email, a reset link has been sent.")
+                ResponseHelper.success(null, ResponseMessage.WORKER.RESET_LINK_SENT)
             );
         } catch (err) {
             next(err);
@@ -103,7 +102,7 @@ export class WorkerController implements IWorkerController {
 
             if (typeof token !== "string") {
                 res.status(HttpStatus.BAD_REQUEST).json(
-                    ResponseHelper.error("Invalid or expired reset link", HttpStatus.BAD_REQUEST)
+                    ResponseHelper.error(ErrorMessages.WORKER.INVALID_LINK, HttpStatus.BAD_REQUEST)
                 );
                 return;
             }
@@ -111,7 +110,7 @@ export class WorkerController implements IWorkerController {
             await this._workerResetPasswordUseCase.execute({ token, newPassword });
 
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(null, "Password reset successfully. Please login with your new password.")
+                ResponseHelper.success(null, ResponseMessage.WORKER.PASSWORD_SESET)
             );
         } catch (err) {
             next(err);

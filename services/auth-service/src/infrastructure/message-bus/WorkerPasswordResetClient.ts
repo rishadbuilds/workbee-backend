@@ -18,7 +18,7 @@ import {
 export class WorkerPasswordResetClient implements IWorkerPasswordResetClient {
     private readonly LOOKUP_QUEUE = "worker.forgot-password.request";
     private readonly RESET_QUEUE = "worker.reset-password.request";
-    private readonly TIMEOUT = 10000; // 10 seconds
+    private readonly TIMEOUT = 10000; // 10 sec
 
     lookupWorker(email: string): Promise<WorkerLookupResponseRMQDTO> {
         return this.rpcCall<WorkerLookupResponseRMQDTO>(this.LOOKUP_QUEUE, { email });

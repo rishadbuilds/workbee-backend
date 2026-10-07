@@ -39,7 +39,9 @@ export const ResponseMessage = {
         GET_USER_STATS:'get users stat'
     },
     WORKER:{
-        CHANGED_WORKER_PASS:"Password changed successfully"
+        CHANGED_WORKER_PASS:"Password changed successfully",
+        PASSWORD_SESET:"Password reset successfully. Please login with your new password.",
+        RESET_LINK_SENT:"If an approved worker account exists for this email, a reset link has been sent.",
     },
 
     OTP: {
