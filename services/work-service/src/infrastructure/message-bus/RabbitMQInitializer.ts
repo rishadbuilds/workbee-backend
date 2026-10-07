@@ -3,6 +3,7 @@ import { RabbitMQConnection } from '../config/rabbitmq';
 import { WorkerValidationConsumer } from './WorkerValidationConsumer';
 import { logger } from '../logger/logger';
 import { WorkerChangePasswordConsumer } from './WorkerChangePasswordConsumer';
+import { WorkerPasswordResetConsumer } from './WorkerPasswordResetConsumer';
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -28,10 +29,13 @@ export class RabbitMQInitializer {
 
 
             //  Worker Change Password
-            const workerChangePasswordConsumer =container.resolve(WorkerChangePasswordConsumer);
+            const workerChangePasswordConsumer = container.resolve(WorkerChangePasswordConsumer);
             await workerChangePasswordConsumer.start(channel);
             logger.info('- Worker Change Password Consumer started');
 
+            const workerPasswordResetConsumer = container.resolve(WorkerPasswordResetConsumer);
+            await workerPasswordResetConsumer.start(channel);
+            logger.info('- Worker Reset Password Consumer started');
 
 
             this.isInitialized = true;

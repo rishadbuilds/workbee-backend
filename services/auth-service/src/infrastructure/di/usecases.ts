@@ -56,6 +56,10 @@ import { GetAdminUserStatsUseCase } from "../../application/use-cases/admin/GetA
 import { IGetAdminUserStatsUseCase } from "../../application/ports/admin/IGetAdminUserStatsUseCase";
 import { UpdateUserProfileUseCase } from "../../application/use-cases/user/profile-settings/UpdateUserProfileUseCase";
 import { IUpdateUserProfileUseCase } from "../../application/ports/user/profile-settings/IUpdateUserProfileUseCase";
+import { IWorkerForgotPasswordUseCase } from "../../application/ports/worker/IWorkerForgotPasswordUseCase";
+import { IWorkerResetPasswordUseCase } from "../../application/ports/worker/IWorkerResetPasswordUseCase";
+import { WorkerResetPasswordUseCase } from "../../application/use-cases/worker/WorkerResetPasswordUseCase";
+import { WorkerForgotPasswordUseCase } from "../../application/use-cases/worker/WorkerForgotPasswordUseCase";
 
 //usecases will injected by auto via @inject
 //user
@@ -89,3 +93,6 @@ container.register<IGetAdminUserStatsUseCase>("GetAdminUserStatsUseCase", GetAdm
 //worker
 container.registerSingleton<IWorkerLoginUseCase>("WorkerLoginUseCase", WorkerLoginUseCase)
 container.registerSingleton<IGetUserProfileStatUseCase>("GetUserProfileStatUseCase", GetUserProfileStatUseCase)
+container.registerSingleton<IWorkerForgotPasswordUseCase>("WorkerForgotPasswordUseCase", WorkerForgotPasswordUseCase)
+container.registerSingleton<IWorkerResetPasswordUseCase>("WorkerResetPasswordUseCase", WorkerResetPasswordUseCase)
+

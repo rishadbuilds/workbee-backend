@@ -15,12 +15,10 @@ import { IGetUserProfileStatUseCase } from "../../../application/ports/worker/IG
 
 //controller interface
 import { IWorkerController } from "../../ports/IWorkerController";
+import { IWorkerForgotPasswordUseCase } from "../../../application/ports/worker/IWorkerForgotPasswordUseCase";
+import { IWorkerResetPasswordUseCase } from "../../../application/ports/worker/IWorkerResetPasswordUseCase";
 
-/** 
- * 
- * worker controller 
- * 
- */
+/** worker controller */
 
 @injectable()
 export class WorkerController implements IWorkerController {
@@ -28,6 +26,9 @@ export class WorkerController implements IWorkerController {
         @inject("WorkerLoginUseCase") private readonly _workerLoginUseCase: IWorkerLoginUseCase,
         @inject("ChangeWorkerPasswordUseCase") private readonly _changeWorkerPasswordUseCase: IChangeWorkerPasswordUseCase,
         @inject("GetUserProfileStatUseCase") private readonly _getUserProfileStatUseCase: IGetUserProfileStatUseCase,
+        @inject("WorkerForgotPasswordUseCase") private readonly _workerForgotPasswordUseCase: IWorkerForgotPasswordUseCase,
+        @inject("WorkerResetPasswordUseCase") private readonly _workerResetPasswordUseCase: IWorkerResetPasswordUseCase,
+
 
     ) { }
 
@@ -76,6 +77,42 @@ export class WorkerController implements IWorkerController {
             const profile = await this._getUserProfileStatUseCase.execute({ userId });
 
             res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.USER.USER_PROFILE_RETRIEVED));
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async workerForgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { email } = req.body;
+            await this._workerForgotPasswordUseCase.execute({ email });
+
+            // same response whether or not the email exists
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(null, "If an approved worker account exists for this email, a reset link has been sent.")
+            );
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async workerResetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { token } = req.params;
+            const { newPassword } = req.body;
+
+            if (typeof token !== "string") {
+                res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error("Invalid or expired reset link", HttpStatus.BAD_REQUEST)
+                );
+                return;
+            }
+
+            await this._workerResetPasswordUseCase.execute({ token, newPassword });
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(null, "Password reset successfully. Please login with your new password.")
+            );
         } catch (err) {
             next(err);
         }

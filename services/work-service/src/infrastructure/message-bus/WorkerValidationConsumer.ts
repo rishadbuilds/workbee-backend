@@ -1,8 +1,8 @@
-// /**
-//  * worker-service - auth-service communication (login validation)
-//  * auth service sends: { email, password, correlationId }
-//  * worker service checks worker and responds with: { success, data?, error? }
-//  */
+/**
+ * worker-service - auth-service communication (login validation)
+ * auth service sends: { email, password, correlationId }
+ * worker service checks worker and responds with: { success, data?, error? }
+ */
 
 import { Channel } from "amqplib";
 import { injectable, inject } from "tsyringe";

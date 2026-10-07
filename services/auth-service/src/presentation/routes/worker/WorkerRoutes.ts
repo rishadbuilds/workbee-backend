@@ -8,7 +8,13 @@ const workerController = container.resolve(WorkerController);
 
 /** worker routes */
 
+// router.post("/worker-login", workerController.workerLogin.bind(workerController));
+// router.post("/change-worker-password", workerController.changeWorkerPassword.bind(workerController));
+// router.get('/user-profile-stat/:userId', workerController.getUserProfile.bind(workerController));
+
 router.post("/worker-login", workerController.workerLogin.bind(workerController));
+router.post("/worker-forgot-password", workerController.workerForgotPassword.bind(workerController));
+router.post("/worker-reset-password/:token", workerController.workerResetPassword.bind(workerController));
 router.post("/change-worker-password", workerController.changeWorkerPassword.bind(workerController));
 router.get('/user-profile-stat/:userId', workerController.getUserProfile.bind(workerController));
 
