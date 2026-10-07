@@ -2,9 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 
 import { HttpStatusCode, UserRole } from "workbee-common";
-
+import { ResponseHelper } from "../../shared/helpers/reponseHelper";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 import { IPaymentController } from "../ports/IPaymentController";
 
+// usecase interfaces
 import { ICreateRazorpayOrderUseCase } from "../../application/ports/user/ICreateRazorpayOrderUseCase";
 import { IVerifyRazorpayPaymentUseCase } from "../../application/ports/payment/IVerifyRazorpayPaymentUseCase";
 import { IMarkPaymentFailedUseCase } from "../../application/ports/payment/IMarkPaymentFailedUseCase";
@@ -12,14 +15,11 @@ import { IScheduleWorkerPayoutUseCase } from "../../application/ports/worker/ISc
 import { IGetWalletUseCase } from "../../application/ports/wallet/IGetWalletUseCase";
 import { IGetAdminPaymentSummaryUseCase } from "../../application/ports/admin/IGetAdminPaymentSummaryUseCase";
 import { IGetAdminPaymentsListUseCase } from "../../application/ports/admin/IGetAdminPaymentsListUseCase";
-
-import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
-
-import { ResponseHelper } from "../../shared/helpers/reponseHelper";
-import { ResponseMessage } from "../../shared/constants/ResponseMessages";
-import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 import { IGetWorkerEarningsStatsUseCase } from "../../application/ports/worker/IGetWorkerEarningsStatsUseCase";
 import { IGetAdminPaymentStatsUseCase } from "../../application/ports/admin/IGetAdminPaymentStatsUseCase";
+import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
+
+/** payment controller */
 
 @injectable()
 export class PaymentController implements IPaymentController {

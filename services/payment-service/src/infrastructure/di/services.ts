@@ -8,6 +8,8 @@ import { PlatformFeeCalculator } from '../services/PlatformFeeCalculator';
 import { PLATFORM_FEE_RATE } from '../../shared/constants/Payment';
 import { IPaymentGateway } from '../../application/ports/payment-gateways/IPaymentGateway';
 
+/** service di registration */
+
 container.register("RazorpayConfig", { useFactory: instanceCachingFactory(razorpayConfigFactory), });
 
 container.registerSingleton<IPaymentGateway>("PaymentGateway", RazorpayPaymentGateway);

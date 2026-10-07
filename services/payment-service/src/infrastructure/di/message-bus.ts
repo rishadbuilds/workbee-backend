@@ -4,6 +4,8 @@ import { container } from 'tsyringe';
 import { EventPublisher } from '../message-bus/PaymentEventPublisher';
 import { IEventPublisher } from '../../application/ports/message-bus/IEventPublisher';
 
+/** message bus d registration */
+
 container.registerSingleton<IEventPublisher>("EventPublisher", EventPublisher);
 
 export { container };

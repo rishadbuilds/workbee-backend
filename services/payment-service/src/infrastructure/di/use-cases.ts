@@ -24,6 +24,7 @@ import { IGetAdminPaymentStatsUseCase } from '../../application/ports/admin/IGet
 import { MarkPaymentFailedUseCase } from '../../application/use-cases/payment/MarkPaymentFailedUseCase';
 import { IMarkPaymentFailedUseCase } from '../../application/ports/payment/IMarkPaymentFailedUseCase';
 
+/** usecase di registration */
 container.register<ICreateRazorpayOrderUseCase>("CreateRazorpayOrderUseCase", { useClass: CreateRazorpayOrderUseCase });
 container.register<IVerifyRazorpayPaymentUseCase>("VerifyRazorpayPaymentUseCase", { useClass: VerifyRazorpayPaymentUseCase });
 container.register<ScheduleWorkerPayoutUseCase>("ScheduleWorkerPayoutUseCase", { useClass: ScheduleWorkerPayoutUseCase });

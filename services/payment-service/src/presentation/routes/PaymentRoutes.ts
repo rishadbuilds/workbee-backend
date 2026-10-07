@@ -6,6 +6,8 @@ const router = Router();
 
 const paymentController = container.resolve(PaymentController);
 
+/** payment service route */
+
 router.post("/create-order", paymentController.createOrder.bind(paymentController));
 router.post("/verify", paymentController.verifyPayment.bind(paymentController));
 router.post("/payment-failed", paymentController.markPaymentFailed.bind(paymentController));

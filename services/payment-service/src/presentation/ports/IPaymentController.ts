@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
+/** interface of payment controller */
+
 export interface IPaymentController {
     createOrder(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
     verifyPayment(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
