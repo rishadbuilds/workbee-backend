@@ -1,19 +1,15 @@
-
-// /**
-//  * inter serivce comm [worker service <-> auth serivce] : to delete refresh token after blocking worker
-//  */
-
 import { injectable, inject } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { ITokenService } from "../../domain/services/ITokenService";
 import RedisClient from "../config/RedisClient";
 import { ConsumeMessage } from "amqplib";
 import { logger } from "../logger/logger";
+import { IWorkerBlockedEvent } from "./types/types";
 
-interface IWorkerBlockedEvent {
-  workerId: string;
-  isBlocked: boolean;
-}
+
+/**
+ * inter serivce comm [worker service <-> auth serivce] : to delete refresh token after blocking worker
+ */
 
 @injectable()
 export class WorkerEventConsumer {

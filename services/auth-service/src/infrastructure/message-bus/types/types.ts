@@ -17,3 +17,9 @@ export interface UserProfileRpcRequestMsg {
   correlationId: string;
   userId: string;
 }
+
+/** WorkerEventConsumer */
+export interface IWorkerBlockedEvent {
+  workerId: string;
+  isBlocked: boolean;
+}
