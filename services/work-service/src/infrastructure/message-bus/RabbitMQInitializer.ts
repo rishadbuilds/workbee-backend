@@ -5,6 +5,11 @@ import { logger } from '../logger/logger';
 import { WorkerChangePasswordConsumer } from './WorkerChangePasswordConsumer';
 import { WorkerPasswordResetConsumer } from './WorkerPasswordResetConsumer';
 
+/**
+ * Rabbitmq Clients Initializer
+ * 
+ */
+
 export class RabbitMQInitializer {
     private static isInitialized = false;
 
@@ -33,6 +38,7 @@ export class RabbitMQInitializer {
             await workerChangePasswordConsumer.start(channel);
             logger.info('- Worker Change Password Consumer started');
 
+            //  Worker reset pass
             const workerPasswordResetConsumer = container.resolve(WorkerPasswordResetConsumer);
             await workerPasswordResetConsumer.start(channel);
             logger.info('- Worker Reset Password Consumer started');

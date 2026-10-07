@@ -4,6 +4,12 @@ import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 import { IUserDisputeActionClient,UserDisputeActionRequest,UserDisputeActionResponse, } from "../../domain/message-bus/IUserDisputeActionClient";
 
+/** 
+ * user dispute action client
+ * - work service <-> auth service
+ * - to manuplate client shema
+ */
+
 @injectable()
 export class UserDisputeActionClient implements IUserDisputeActionClient {
   private readonly REQUEST_QUEUE = "user.dispute-action.request";

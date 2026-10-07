@@ -4,6 +4,11 @@ import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 import { IGetUserProfileRpcClient, UserProfileRpcResponse } from "../../domain/message-bus/IGetUserProfileRpcClient";
 
+/**
+ * get use profile client workservice <-> auth service
+ * - to get dispute id in dispute handling
+ */
+
 @injectable()
 export class GetUserProfileRpcClient implements IGetUserProfileRpcClient {
   private readonly REQUEST_QUEUE = "user.profile.request";
