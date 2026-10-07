@@ -1,9 +1,3 @@
-/**
- * worker-service - auth-service communication (login validation)
- * auth service sends: { email, password, correlationId }
- * worker service checks worker and responds with: { success, data?, error? }
- */
-
 import { Channel } from "amqplib";
 import { injectable, inject } from "tsyringe";
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
@@ -12,6 +6,10 @@ import { WorkerStatus } from "../database/models/WorkerSchema";
 import { getErrorMessage } from "workbee-common";
 import { logger } from "../logger/logger";
 import { WorkerLoginRequest, WorkerLoginResponse } from "./types/types";
+
+/**
+ * worker-service - auth-service communication (login validation)
+ */
 
 @injectable()
 export class WorkerValidationConsumer {

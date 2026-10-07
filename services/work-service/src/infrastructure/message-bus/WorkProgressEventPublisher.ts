@@ -4,6 +4,12 @@ import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 import { IWorkProgressEventPublisher } from "../../domain/message-bus/IWorkProgressEventPublisher";
 
+/** 
+ * worker event publiser
+ * work service <-> notificaion service 
+ * to know the work changes and notify to users
+ */
+
 @injectable()
 export class WorkProgressEventPublisher implements IWorkProgressEventPublisher {
 
