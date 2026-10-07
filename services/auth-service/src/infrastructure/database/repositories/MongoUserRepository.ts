@@ -4,9 +4,7 @@ import { User } from "../../../domain/entities/User";
 import { UserDocument, UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 import { FilterQuery } from "mongoose";
-
-// escape user input before using it inside a regex
-const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+import { escapeRegex } from "../../../shared/constants/Regex";
 
 /** mongo user repository */
 
