@@ -1,12 +1,3 @@
-// export interface AdminWorkStatsResponseDto {
-//     totalWorkers: number;
-//     newWorkersThisMonth: number;
-//     newWorkersLastMonth: number;
-//     newAppliersCount: number;
-//     activeJobsCount: number;
-//     worksCompletedTotal: number;
-// }
-
 export interface AdminRecentAssignedWorkDto {
     id: string;
     workTitle: string;
