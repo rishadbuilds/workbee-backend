@@ -38,6 +38,7 @@ export interface IWorkRepository {
     // admin dash
     countAllActive(): Promise<number>;
     countAllCompleted(): Promise<number>;
-
+    findRecentAssigned(limit: number): Promise<Work[]>;
+    
     findAllForAdmin(options: AdminBookingsQueryOptions): Promise<{ works: Work[]; total: number }>;
 }
