@@ -5,6 +5,8 @@ import { Worker } from "../../../domain/entities/Worker";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { IWorkerEventPublisher } from "../../../domain/message-bus/IWorkerEventPublisher";
 
+/** block worker usecase */
+
 @injectable()
 export class BlockWorkerUseCase implements IBlockWorkerUseCase {
   constructor(

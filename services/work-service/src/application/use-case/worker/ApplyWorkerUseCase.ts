@@ -9,6 +9,8 @@ import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepositor
 import { IHashService } from "../../../domain/services/IHashService";
 import { IApplyWorkerUseCase } from "../../ports/worker/IApplyWorkerUseCase";
 
+/** apply worker usecase */
+
 @injectable()
 export class ApplyWorkerUseCase implements IApplyWorkerUseCase{
     constructor(
