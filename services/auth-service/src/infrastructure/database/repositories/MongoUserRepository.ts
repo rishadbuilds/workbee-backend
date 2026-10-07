@@ -5,6 +5,9 @@ import { UserDocument, UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 import { FilterQuery } from "mongoose";
 
+// escape user input before using it inside a regex
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /** mongo user repository */
 
 @injectable()
@@ -52,10 +55,22 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
         const query: FilterQuery<UserDocument> = {};
 
         // Search filter
-        if (search) {
+        if (search && search.trim()) {
+            const term = search.trim();
+
             query.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } }
+                { name: { $regex: term, $options: 'i' } },
+                { email: { $regex: term, $options: 'i' } },
+                // user id: full id or any part of it (e.g. the 6 chars shown in the table)
+                {
+                    $expr: {
+                        $regexMatch: {
+                            input: { $toString: "$_id" },
+                            regex: escapeRegex(term),
+                            options: "i",
+                        },
+                    },
+                },
             ];
         }
 
